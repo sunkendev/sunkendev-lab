@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# AI-Library pre-commit hook (portable wrapper).
+# Enable per clone with:  git config core.hooksPath code/githooks
+ROOT="$(git rev-parse --show-toplevel)"
+exec python3 "$ROOT/code/pre-commit.py"

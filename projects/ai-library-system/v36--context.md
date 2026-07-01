@@ -1,0 +1,395 @@
+CONTEXT v36
+-----------
+PROJECT: AI Document Library System — a five-layer vendor-agnostic plain-text library for managing AI-generated work.
+DECISIONS:
+- Plain Markdown as universal format
+- YAML frontmatter as metadata standard
+- Two-digit version numbers (v01...v99) for correct lexicographic sort
+- Three-file checkpoint triplet: artifact, context, instructions
+- THREAD.md as project spine, one per project folder
+- MAP.md at library root as single traversal index
+- Master prompt as sole control mechanism
+- Layer 1 mandatory; all other layers optional and additive
+- Library folder is storage-agnostic
+- LaTeX for formal reference documents
+- docs/ and code/ live inside each project folder, not at root
+- inbox/ is the only non-project folder at root besides MAP.md and reference docs
+- research/ and creative/ folders eliminated
+- Frontmatter type field values: document | code | context
+- Context file schema: PROJECT, DECISIONS, RULED OUT, OPEN, STATE — in that order
+- Instructions file schema: PROJECT, GOAL, BACKGROUND, ARTIFACT STATE, KEY DECISIONS, OPEN QUESTIONS, EXPLICITLY RULED OUT, NEXT TASK, PERSONA, STYLE AND CONSTRAINTS
+- DECISIONS and RULED OUT are append-only in both context and instructions files
+- ORIGIN removed from context schema — episodic history belongs in THREAD.md
+- Master prompt checkpoint ritual updated to enforce all three block schemas
+- v01 and v02 files treated as pre-schema legacy
+- Artifact wrapper schema: LABEL, VERSION MATCH, EXTENSION MATCH, NON-EMPTY BODY
+- Artifact type schemas defined per type at time of first use
+- THREAD.md schema: TITLE, STARTED, DESCRIPTION, PERSONA, CHECKPOINT LOG — ascending order
+- THREAD.md status values: active | paused | complete | archived
+- Latest checkpoint derived from last log entry, not stored in META
+- MAP.md schema: TITLE, ROOT, PROJECTS — no META, no duplicate entries
+- persona.md schema: ROLE, DOMAIN, BEHAVIOUR, EXAMPLES — all mandatory
+- persona.md has no frontmatter — it is a project file not a standalone document
+- VOICE and CONSTRAINTS merged into BEHAVIOUR in persona.md schema
+- EXAMPLES mandatory in persona.md — specific detailed personas outperform generic ones
+- Git as foundation for Layer 3 — local git first, remote later
+- Pre-commit hook as primary validation mechanism
+- vNN prefix retained for human readability alongside git history
+- Checkpoint = major milestone commit; routine sessions = git commits without full triplet
+- Git initialised — first commit 5a20741 on main branch
+- Library stored in iCloud at ~/AI-Library (iCloud)
+- RESUME procedure requires four files in order: persona.md, THREAD.md, context, instructions
+- .git folder and .DS_Store excluded from MAP.md
+- Post-checkpoint instructions embedded in MASTER-PROMPT.md
+- Pre-commit hook written, installed, and tested — operational at commit 515f792
+- Triplet lockstep enforced: any vNN file staged requires all three at same version
+- Version mismatch within same project folder blocks commit
+- Block on structural violations; warn on advisory checks
+- MAP.md integrity check: warns if referenced path does not exist on disk
+- THREAD.md order check: warns if checkpoint headers are out of ascending order
+- Exclusions centralised in EXCLUDED set in pre-commit script
+- MASTER-PROMPT.md, ARCHITECTURE.tex, USER-GUIDE.tex, THREAD.md, persona.md excluded from MAP.md warning
+- Pre-commit script self-check: not required — .py files correctly ignored by hook
+- code/ folder at library root for deployed operational scripts
+- projects/ai-library-system/code/ is source and development environment for all library scripts
+- Flow is project → library: develop and version in project, deploy to code/ at library root
+- projects/ai-library-system/ is the control panel for the library system itself
+- .git/hooks/pre-commit wired from code/pre-commit.py not from project folder
+- Layer 2 implemented by placing full MASTER-PROMPT.md and persona.md in platform workspace system prompt
+- System prompt position gives standing instructions structural priority over pasted content
+- Layer 2 session start still requires all four RESUME files pasted — system prompt is background, not active context
+- Layer 2 is consumer app tier only — API cost prohibitive for this use case
+- NOTE format added to THREAD.md schema for inter-checkpoint working notes
+- NOTE entries: NOTE YYYY-MM-DD, Topic line, prose — no triplet, no version number, no validation
+- After appending a NOTE, THREAD.md must be committed immediately before proceeding
+- layer-1-foundation.md rewritten and renamed to 2026-04-11--layer-1-foundation--claude.md
+- NOTE format block added to THREAD.md section of 2026-04-11--layer-1-foundation--claude.md
+- 2026-04-11--layer-2-session--claude.md written and committed
+- Layer 2 platform experiment run — Claude Project confirmed working as designed
+- Claude Code five-layer evaluation completed and report saved
+- .claude/ added to .gitignore — Claude Code worktree excluded from git and libmap
+- libmap alias updated to exclude .claude/ path
+- NOTE entries appended via add_note_thread.py — manual THREAD.md editing replaced
+- add_note_thread.py commits THREAD.md immediately — immediate-commit rule enforced automatically
+- checkpoint.py designed, built, tested, and deployed
+- checkpoint.py uses sentinel walk (MAP.md) for library root discovery
+- checkpoint.py parses tilde fence as canonical for ARTIFACT block; four-backtick and three-backtick retained as legacy fallbacks
+- checkpoint.py extracts MAP.md summaries from THREAD ENTRY **Artifact:**, **Context:**, **Instructions:** fields
+- checkpoint.py does not execute git — prints commands for user to run
+- checkpoint.py source: projects/ai-library-system/code/checkpoint.py
+- checkpoint.py deployment: code/checkpoint.py at library root
+- ARTIFACT outer fence changed from four-backtick to tilde — tilde and backtick fences never collide in CommonMark
+- checkpoint.py dry-run is default; --write executes
+- checkpoint.py input defaults to temp/v[NN]-checkpoint.txt inside library root
+- checkpoint.py input-file argument is now optional
+- Version guard added to checkpoint ritual — THREAD.md must be present before checkpoint proceeds
+- temp/ folder at library root holds checkpoint input files — one per version
+- temp/ excluded from git via .gitignore
+- temp/ excluded from pre-commit hook via EXCLUDED set
+- Saving checkpoint input file outside library folder ruled out — temp/ is the correct location
+- Checkpoint file delivered as downloadable .txt saved to temp/ by AI — no manual save step
+- Artifact, context, and instructions files all begin with label line and separator — self-describing by convention
+- Label and separator consumed by parse_blocks() are reconstructed by checkpoint.py on write for all three file types
+- Separator width equals label width — consistent across all files on disk
+- Layer 2 workspace system prompt update is a mandatory step whenever the artifact is MASTER-PROMPT.md
+- Claude Code evaluation prompt pattern established as reusable technique for external code review
+- MASTER-PROMPT.md content must never contain a line starting with ~~~ — collides with tilde fence parser
+- Library structure diagram in MASTER-PROMPT.md updated to include temp/ folder
+- MASTER-PROMPT.md CONTEXT schema updated — append-only enforcement: copy all previous lines verbatim then append
+- checkpoint.py integrity validation runs after every --write: label lines, separators, STATE presence, append-only superset check, size ratio check
+- checkpoint.py writes SHA-256 manifest to temp/v[NN]-[slug]-manifest.json after every --write
+- Manifest covers: artifact, context, instructions, THREAD.md, MAP.md, persona.md
+- SHA-256 tamper detection checks all six manifest files at next checkpoint
+- THREAD.md included in manifest — append-only, tamper detection enforced
+- MAP.md included in manifest — tamper detection catches manual edits between checkpoints
+- persona.md included in manifest — stable file, tamper detection enforced
+- Integrity validation warns but does not block — consistent with pre-commit hook philosophy
+- DECISIONS and RULED OUT drop detection: new context must be superset of previous version
+- Artifact and context size ratio thresholds: artifact >= 80% of previous, context >= 90% of previous
+- MASTER-PROMPT.md excluded from manifest — legitimate hash changes
+- v14 context repaired — dropped decisions from v10 restored, two missing decisions added
+- Library consistency audit run via Claude Code — v14 triplet and v11 STATE identified and repaired
+- Claude Code audit prompt pattern saved as reusable technique
+- iCloud library frozen at v15 as permanent baseline — no new commits to iCloud repo
+- New library forked to ~/Claude/Projects/AI-Library/ — local SSD, independent git repo, first commit 8e9ac4a
+- Fork implemented as new folder with new git repo — not a git branch, not a remote of the iCloud repo
+- ~/Claude/Projects/ chosen as library parent — outside macOS privacy-protected folders, no terminal permission issues
+- Cowork designated as Layer 2+3 orchestrator — replaces manual terminal operations for library management
+- WORM storage strategy: local SSD primary, iCloud passive rsync mirror, GitHub WORM with branch protection, USB-C 2TB SSD as future tertiary
+- Cowork project created: AI-Library pointing to ~/Projects/AI-Library
+- Cowork project instructions = MASTER-PROMPT.md + persona.md — Layer 2 convention maintained
+- git is folder-bound — each library has its own independent repo, no cross-repo coupling
+- macOS protected folders (Documents, Desktop, Downloads) require explicit terminal permission grants — avoided as library home
+- ai-library-ops Cowork orchestration skill designed, built, and installed
+- Skill source at projects/ai-library-system/code/ai-library-ops/SKILL.md — follows project → library convention
+- Skill packaged as temp/ai-library-ops.skill and installed in Cowork
+- Skill handles three operations: CHECKPOINT (blocks → save → dry-run → write → git), NOTE (add_note_thread.py), COMMIT (routine git)
+- Library root discovery in skill: Path('.').rglob('MAP.md') from session working directory, then cd into result
+- All skill commands require cd into library root — scripts use Path.cwd() for sentinel discovery
+- git add and git commit now executed by ai-library-ops skill in Cowork sessions — checkpoint.py continues to print commands for non-Cowork use
+- SKILL.md added to pre-commit EXCLUDED set — skill framework files use their own frontmatter schema
+- .git/hooks/pre-commit replaced with bash wrapper delegating to code/pre-commit.py — eliminates drift, no manual cp step required
+- add_note_thread.py clears stale index.lock and HEAD.lock before git operations
+- Cowork sandbox cannot delete files in .git/ without explicit permission — allow_cowork_file_delete tool required before each git operation
+- allow_cowork_file_delete grants blanket delete permission for AI-Library folder for the session duration — one call per session sufficient
+- Library root discovery in skill changed from Path('.').rglob() to find /sessions -maxdepth 7 — CWD-independent, unaffected by prior cd commands
+- write_snapshot function removed from pre-commit.py — violated self-containment principle by writing to ~/Desktop
+- Self-containment principle established: no library script writes to paths outside ~/Claude/Projects/AI-Library/
+- Git identity configured in .git/config — persists across Cowork sessions, no re-configuration needed
+- HEAD.lock persists after every sandbox git commit because sandbox cannot unlink .git/ files by default — allow_cowork_file_delete followed by rm -f resolves this
+- Layer 2 project instructions update requires manual paste into Cowork project settings — no automation path currently available
+- ai-library-ops skill v3 built with RESUME (Operation 4) and NEW PROJECT (Operation 5) added
+- RESUME reads four project files from disk in order — no copy-paste required in Cowork sessions
+- RESUME discovers project slugs via ls projects/, asks which to load, finds highest vNN context and instructions files automatically
+- NEW PROJECT guided persona creation: three questions one at a time, each with guidance and format-example options
+- NEW PROJECT persona options are format models only — user types real answer via Other; options exist to show expected register
+- NEW PROJECT writes no files until persona is confirmed by user
+- MAP.md project entry format: ## projects/[slug]/ section header with bullet items, inserted before ## inbox/ line
+- legal-research test project created and committed — NEW PROJECT and RESUME flows verified end to end
+- RESUME command in MASTER-PROMPT.md navigation section is superseded by skill automation in Cowork sessions — copy-paste procedure retained for non-Cowork use
+- Behaviour rule added to MASTER-PROMPT.md: before executing any file write, script run, or git operation, state what you are about to do and wait for confirmation
+- Matching rule added to persona.md BEHAVIOUR section: before executing any operation in the library — writes, scripts, git — state the plan and wait for go-ahead
+- v18 context compression event forensically analysed — findings documented in projects/ai-library-system/docs/2026-04-13--v18-compression-forensics--claude.md
+- Compression hit at 165,028 input tokens (82.5% of 200K window) between checkpoint file write and dry-run step
+- System prompt overhead fixed at ~38,521 tokens (19.3% of 200K window) — consumed before session begins
+- Usage field is the only reliable detection source — character count heuristics on JSONL overcount by ~2x
+- File-first checkpoint design validated: all four blocks were on disk before compression hit; no data loss
+- Context detection skill design: CONTEXT CHECK command, two-tier thresholds, Tier 1 at 130,000 input tokens, Tier 2 at 155,000 input tokens
+- Context detection best practice confirmed by web search: fill-ratio checks with approximate token counting are industry standard
+- Separate operational log for context pressure events agreed — not in THREAD.md; log location not yet decided
+- logs/ folder at library root for context pressure events — excluded from git, excluded from pre-commit hook
+- logs/context-pressure.log: append-only plaintext, records Tier 1 (>=130K tokens) and Tier 2 (>=155K tokens) events only
+- ai-library-ops skill v4: context awareness section added — estimates token load at operation start, outputs one-line status, appends to log on threshold breach
+- Automatic per-operation context status is the primary detection mechanism — CONTEXT CHECK command exists as fallback only
+- Context estimate model: fixed ~57K (system prompt ~38.5K + RESUME payload ~18.5K) + per-call weights (exchange ~300, bash ~200, file read ~1K avg, web search/fetch ~1.5K, write/edit ~500)
+- logs/ added to .gitignore — context-pressure.log is operational telemetry, not project history
+- MASTER-PROMPT.md library structure diagram updated to include logs/ folder
+- ai-library-ops skill v5: NEW PROJECT Step 4 writes v00--context.md and v00--instructions.md stubs alongside persona.md and THREAD.md
+- v00 stubs are schema-conformant seed files that ensure RESUME works on a fresh project before any checkpoint exists
+- v00 is superseded after the first real CHECKPOINT produces v01; v00 stub content is minimal but schema-conformant
+- ai-library-ops skill source deployed to code/ai-library-ops/SKILL.md at library root — ships with library independent of projects/ folder
+- Skill deployment to code/ follows the same project → library convention used for checkpoint.py, pre-commit.py, add_note_thread.py
+- MAP.md display text must be a bare filename with no slashes — pre-commit check_map_integrity regex matches all slash-containing strings including display text, not just link URLs
+- Pre-commit false positive: display text containing slash is extracted as a candidate path and checked against disk
+- No out-of-band fix rule added to MASTER-PROMPT.md behaviour rules: never alter any library file without explicit user approval; surface the issue, design the fix, get approval, implement through correct path (library Python, skill, or MASTER-PROMPT.md); treat library as a kernel
+- Only the ai-library-system project may alter MASTER-PROMPT.md; pre-commit enforcement of this rule is a pending open item
+- Library ships with ai-library-system project intact — full development history included, open sourced via GitHub
+- GitHub remote designated as publication channel and update mechanism for shipped libraries
+- legal-research v00 stubs backfilled — all three files committed (acaf715): v00--artifact.md, v00--context.md, v00--instructions.md
+- ai-library-ops skill v6: NEW PROJECT Step 4 writes v00--artifact.md alongside context and instructions stubs; pre-commit triplet rule requires all three
+- ai-library-ops skill v6: NEW PROJECT Step 5 registers all three v00 stubs in MAP.md section for the new project
+- pre-commit MASTER-PROMPT.md write protection deferred — advisory rule only; if implemented, env var bypass (ALLOW_MASTER_PROMPT_WRITE=1) preferred over --no-verify; revisit before GitHub publication
+- Folder conventions section added to MASTER-PROMPT.md: docs/ for session documents, code/ for scripts and skill source, temp/ for checkpoint files only (.skill packages ephemeral), inbox/ for unsorted files, code/ at library root for deployed scripts and skills
+- temp/ misuse in flow-vs-ai identified: kurgan-rostok-review.html and .skill packages accumulated outside convention; cleanup pending
+- Claude Code full architecture and code review conducted — five-area audit, top-5 findings documented in projects/ai-library-system/docs/2026-04-15--architecture-review--claude.md
+- SHA-256 manifests committed to git — .gitignore changed from temp/ to temp/* with !temp/*-manifest.json exception; nine existing manifests (v16–v24) now in git; audit chain durable
+- Library structure diagram in MASTER-PROMPT.md updated to include code/ at library root — AI sessions now have correct mental model of layout
+- pre-commit check_artifact_wrapper() enhanced: validates ARTIFACT v[NN] label line presence and version match against filename; missing or mismatched label blocks commit
+- pre-commit check_map_coverage() corrected: docs/inbox path downgraded from err() to warn() — aligns implementation with RULED OUT entry
+- Integrity warnings are the only non-redundant terminal output of checkpoint.py — file sizes, paths, and commit message are already in git diff and commit message
+- write_checkpoint_log() added to checkpoint.py: appends one line to logs/checkpoint-runs.log after every --write run
+- checkpoint-runs.log entry format: YYYY-MM-DDTHH:MMZ | slug | vNN | integrity: clean OR integrity: N warnings — TYPE1; TYPE2
+- .gitignore updated: logs/* + !logs/checkpoint-runs.log — checkpoint-runs.log tracked in git as permanent audit record; context-pressure.log and session.log remain excluded as runtime telemetry
+- NO CHANGE sentinel added to checkpoint.py ARTIFACT block handling: when ARTIFACT block body is "NO CHANGE", checkpoint.py copies previous artifact and rewrites label and separator lines
+- copy_and_relabel_artifact() handles the copy; errors clearly if previous artifact not found
+- Sentinel approach preserves four-block structure, separation of duties, and future API compatibility
+- Two-mode design rejected: auto-generating THREAD ENTRY in checkpoint.py crosses content boundary and splits ownership with the AI
+- MASTER-PROMPT.md checkpoint ritual updated to document NO CHANGE sentinel
+- v28 forks the library to a private GitHub repo for iOS / cloud Claude Code access — independent repo, Cowork copy frozen at v28 as baseline (mirrors the iCloud to Cowork fork at v16)
+- Mobility accepted as a deliberate trade against the private-folder / vendor-independence principle — justified by iOS access and an open-source on-ramp
+- Cowork and GitHub copies are not used in parallel; GitHub is the active line from v28; resume in Cowork only after pull-from-GitHub to prevent a history fork
+- The move is pure-cloud: the library content is brought to GitHub by manual upload, with no local clone and no syncing working copy on the Mac
+- The library's audit trail lives in the files (THREAD.md + vNN triplets), not in git commit history; a fresh-history GitHub upload preserves the trail — git history is plumbing
+- Layer 2 in Claude Code / cloud sessions loads via CLAUDE.md at repo root importing MASTER-PROMPT.md (@MASTER-PROMPT.md) — replaces the manual system-prompt paste; manual paste retained only for platforms without a CLAUDE.md mechanism
+- ai-library-ops skill deployed to .claude/skills/ai-library-ops/ so cloud sessions autoload it; installed plugins do not run in cloud sessions, repo-local skills do
+- .gitignore exception: .claude/* ignored except .claude/skills/ — selective-include pattern, as with manifests and checkpoint-runs.log
+- Skill library-root discovery changed to git rev-parse --show-toplevel with find /sessions fallback — portable across cloud and Cowork
+- allow_cowork_file_delete made best-effort in the skill — Cowork-only tool, absent in cloud; rm -f .git/*.lock + native git used in all environments
+- Portable git hooks via code/githooks/ enabled per clone with git config core.hooksPath code/githooks; fresh clones never receive .git/hooks/
+- Git identity (user.name / user.email) bootstrapped if unset, since a fresh clone has no .git/config identity
+- v28 created in Cowork as the documented fork checkpoint; v29 onward evolves on GitHub via iOS cloud sessions
+- First cloud Claude Code session completed the v28 toolchain spike: repo unpacked from the prepared tarball, core.hooksPath and git identity bootstrapped, code/checkpoint.py run dry-run then --write
+- Spike confirmed: .claude/skills/ai-library-ops/SKILL.md autoloads in a cloud session with no plugin install step — it appeared in the available-skills list automatically
+- Spike confirmed: a private GitHub repo is accessible and writable from a cloud Claude Code session — push to origin succeeded
+- Spike confirmed: CLAUDE.md's @MASTER-PROMPT.md import resolves automatically in the cloud session system prompt — no manual paste needed
+- code/pre-commit.py EXCLUDED set was missing CLAUDE.md (new in v28) — fixed in both the deployed copy (code/pre-commit.py) and the source copy (projects/ai-library-system/code/pre-commit.py)
+- 2026-04-11--schemas--claude.md had a stray title/separator line before its frontmatter block, predating the current convention — removed so frontmatter starts at line 1 like every other docs/ file
+- The pre-commit triplet version-mismatch check is incompatible with bulk historical imports by design — it assumes one checkpoint triplet staged per commit; the v28 genesis commit legitimately staged all 28 ai-library-system + 7 flow-vs-ai + 1 legal-research versions at once and was committed with a one-time --no-verify; the hook itself was left unchanged and applies normally to every commit from v29 onward
+- checkpoint.py's SHA-256 tamper detection for MAP.md and THREAD.md only compares against the same project's own prior manifest hash; a sibling project's checkpoint can legitimately edit the shared MAP.md in between, which then reads as TAMPER DETECTED at the next checkpoint of the first project — confirmed by matching the v28 "tampered" pre-write MAP.md hash (2c25f02d19ac82ccde11a421f16c12b563c0e7ab21b5cafa909750ff2750a66f, 23581 bytes) against the hash flow-vs-ai's v07 manifest had already recorded for MAP.md
+- GitHub's durable, full-diff commit history makes the SHA-256 manifest/tamper-detection mechanism redundant for its original purpose now that the library lives on a permanent remote — git diff/log already shows exactly what changed, by whom, with no cross-project blind spot
+- SHA-256 manifest/tamper-detection removed entirely from checkpoint.py: sha256_of_file(), manifest_path(), write_manifest(), load_manifest(), the tamper-detection check in validate_new_triplet(), and the pre_write_hashes parameter/plumbing in main()
+- write_checkpoint_log() and copy_and_relabel_artifact() kept — unrelated to the manifest mechanism
+- Label/separator validation, the DECISIONS/RULED OUT append-only superset check, and the artifact/context size-ratio checks kept — these catch write-time bugs in checkpoint.py itself (e.g. the v12/v13 tilde-fence truncation), which git diff over commit history cannot prevent
+- .gitignore's !temp/*-manifest.json exception removed — vestigial once no new manifests are written
+- The 19 existing temp/v*-manifest.json files (v02–v07 flow-vs-ai, v16–v29 ai-library-system) left in place on disk and in git as archived audit records — removal is a forward-looking code change, not a historical-data purge
+- MASTER-PROMPT.md temp/ folder convention line updated to drop the v[NN]-[slug]-manifest.json reference, since checkpoint.py no longer produces one
+- Manifest-removal code change (checkpoint.py x2, .gitignore) committed as a routine commit (ba0292c) ahead of this checkpoint; the MASTER-PROMPT.md wording fix held for this checkpoint's artifact block, per the established convention that MASTER-PROMPT.md only changes via the checkpoint ritual
+- ARCHITECTURE.tex rewritten from scratch as v2.0 (commit 7c49c80): Layers 1–3 rewritten with rigor against actual current behaviour; Layers 4–5 carried forward unchanged from the original text since they describe unbuilt, forward-looking capability with nothing to drift against
+- USER-GUIDE.tex rewritten from scratch as v1.0 (commit 7c49c80): replaces the old clipboard copy-paste ritual with the current file-based, skill-driven RESUME/CHECKPOINT/NOTE/COMMIT/NEW PROJECT workflow
+- Original ARCHITECTURE.tex and USER-GUIDE.tex archived verbatim to projects/ai-library-system/docs/2026-04-11--architecture-v1-original--claude.tex and .../2026-04-11--user-guide-v1-original--claude.tex
+- LaTeX files cannot carry a YAML --- frontmatter block without breaking compilation; archived or reference .tex files instead carry the same fields as a %-commented block before \documentclass
+- First rigor pass (commit 31f11cd) found and fixed four doc/implementation mismatches: checkpoint.py's post-write-only integrity checks had been misdescribed as pre-write; the THREAD.md ascending-order check was misattributed to checkpoint.py instead of pre-commit.py's check_thread_order(); both docs claimed a non-existent related: field frontmatter check; the MAP-coverage warning was scoped to docs/-only when it actually applies to every non-excluded staged file
+- checkpoint.py's real .md-extension hardcoding bug found during that pass and fixed (not just documented as a known gap): added DEFAULT_ARTIFACT_EXT, find_artifact_path(), and resolve_artifact_extension() — the artifact's file extension is now inherited from the previous version's artifact file on disk, defaulting to .md only when there is no previous version (e.g. v01)
+- copy_and_relabel_artifact(), validate_new_triplet()'s prev_artifact_path lookup, and build_map_entries() (now taking an artifact_ext parameter) all rewired to use find_artifact_path() instead of a hardcoded v[NN]--artifact.md path
+- Extension fix verified end-to-end with a synthetic test project carrying a .tex artifact: dry-run and --write both correctly inferred and used .tex; validate_new_triplet() correctly found the previous .tex artifact and reported a clean integrity pass
+- code/checkpoint.py and projects/ai-library-system/code/checkpoint.py kept in sync after the extension fix, per the project→library deployment convention
+- Second rigor pass (commit cd7964c) found two inaccuracies introduced by the first pass's own fix: the checkpoint.py pseudocode falsely claimed the four-block presence/version-match check was "the only check that can block a run", omitting the project-folder, THREAD.md-presence, input-file, and no-overwrite checks that also block; and three places described RESUME as loading "the latest triplet", when RESUME never reads the artifact file
+- Third rigor pass (commit 5120f8d) found two more leftover instances of the same RESUME-reads-the-artifact overstatement, missed by the second pass's targeted fix: the Layer 2 row of the "What Each Layer Owns" summary table, and the Layer 2 entry in the bottom-up implementation-sequence checklist
+- Methodology established across the three rigor passes: every claim in ARCHITECTURE.tex/USER-GUIDE.tex about script behaviour must be checked directly against the current source of checkpoint.py/pre-commit.py, not against memory of a prior pass's fix — self-introduced errors surfaced even immediately after a fix was made and reviewed
+- No formal branching strategy is used for this library — session/feature branches are transient; merge to main (fast-forward where possible) and push main before ending a session, so main always reflects the latest checkpoint, preserving the single-active-writer linear-history model
+- ai-library-ops skill v8: CHECKPOINT and COMMIT operations push the current branch and fast-forward main to match as part of their git step — closes the gap where cloud session branches never reached main (v30/v31 had silently landed on a session branch and never reached main until manually fast-forwarded)
+- Cloud sandbox git proxy blocks branch deletion (HTTP 403) — confirmed by a live test (disposable test/branch-delete-probe branch); best-effort auto-delete of merged session branches was prototyped but not added to the skill
+- Commit signing shows "Unverified" on GitHub in the Claude Code on the web / cloud sandbox environment by Anthropic's own deliberate security design — signing keys are never placed inside the sandbox; confirmed via Anthropic's own docs and a related closed-as-not-planned GitHub feature request (anthropics/claude-code#7711); not a library bug, not fixable via git config, and may not apply outside this specific cloud-sandbox setup
+- ai-library-ops SKILL.md now explicitly warns against calling checkpoint.py or add_note_thread.py directly via Bash outside the skill — direct calls skip the push/fast-forward-main step and leave commits stranded on the session branch; this was discovered by the agent doing exactly that mid-session
+- NOTE operation does not fast-forward main, by design — only pushes the current branch. NOTE is deliberately the lightest-ceremony operation in the system (appendable "at any time without a checkpoint" per MASTER-PROMPT.md); giving it the same push+merge+push weight as CHECKPOINT/COMMIT was tried, found to violate that deliberate ceremony tiering and increase merge-conflict exposure on the highest-frequency operation, and was reverted in the same session
+- The main fast-forward for work committed via NOTE is deferred to the next CHECKPOINT, COMMIT, or end of session — consistent with the project's own stated rule ("session/feature branches... merged back to main before the session ends"), which is a session-boundary rule, not a per-commit rule
+- This design choice (push-only for NOTE) was verified by live execution, not just by reading the edited prose: a real NOTE commit was pushed to the session branch and origin/main's HEAD was confirmed unchanged immediately after
+- signal-lost test project (separate project folder) was used to rigor-test the RESUME/CHECKPOINT cycle on real, sustained narrative content across genuinely separate, memory-less subagent sessions (not mechanics-only testing) — full findings in projects/signal-lost/docs/2026-06-28--rigor-test-findings--claude.md
+- Confirmed by that test: RESUME (persona.md + THREAD.md + latest context.md + latest instructions.md, never the artifact) is sufficient for plot/fact/decision continuity across independent memory-less sessions — no subagent mis-stated or contradicted a locked decision across three real content rounds plus a comprehension-only round
+- Confirmed by that test: RESUME is, by design, insufficient to verify prose-voice/style continuity at the sentence level, since context.md never carries forward verbatim artifact text (only adjective-level voice description plus at most one borrowed metaphor) — every writing-round subagent self-reported having to guess at sentence-level voice
+- signal-lost test also surfaced a real, generalizable content-checkpointing discipline issue: an imprecise restatement between a context.md STATE line and the corresponding instructions.md NEXT TASK line (differing on a character's physical position at scene's end) created a genuine ambiguity a fresh session could not resolve without the unread artifact — flagged as a human/AI checkpoint-assembly discipline issue, not a schema flaw
+- signal-lost is kept permanently in the library as a real artifact and as documentation of this rigor test, not deleted after the test concluded — explicit user decision
+- The signal-lost prose-voice "gap" was assessed, on critique, as an artifact of this session's own thin test-authoring choices during a short test, not a structural schema limitation — the previously-floated style-anchor field is downgraded from an open candidate to explicitly ruled out
+- Repo-scope decision: ai-library-system's scripts and tests stay in the same single repo as the rest of the library; no separate repo — explicit user decision
+- Binding repo-scope constraint adopted: no CI workflow files, no dependency manifests, no tests/ directory sprawl with fixtures/conftest; stdlib-only Python, flat test files, run manually on demand — CI/manifest/package-management files, not test files themselves, are what would actually signal "this has become a software project"
+- Observability gap diagnosed: before this session, the git-sync step inside CHECKPOINT/COMMIT/NOTE produced zero durable record of its outcome — visible only in chat — while checkpoint.py's own run already had durable logging via logs/checkpoint-runs.log
+- Root cause identified as shared between the test-coverage gap and the observability gap: the git-sync logic lived only as bash prose in SKILL.md, re-derived from memory each session by an agent — neither testable nor reliably loggable in that form
+- Web research on audit-logging best practice confirmed ISO 8601 UTC timestamps and closed-enum outcome status as standard, but JSON Lines (the generic best-practice format) was rejected for this library as inconsistent with the existing plain pipe-delimited logs/checkpoint-runs.log convention
+- Web research on Anthropic's own published SKILL.md authoring guidance confirmed the design principle behind the fix: SKILL.md prose should describe judgment-requiring steps, deterministic procedures belong in scripts the skill invokes — checkpoint.py and add_note_thread.py already followed this; the git-sync block was the one place that hadn't
+- test_checkpoint.py built: 25 stdlib-unittest cases covering resolve_artifact_extension, parse_blocks (all three fence styles), validate_new_triplet (7 integrity-check scenarios), copy_and_relabel_artifact, MAP entry building, and git_commit_message, plus one end-to-end subprocess run of the real script in --write mode — committed (73db0f2), deployed byte-identically to code/ and projects/ai-library-system/code/
+- .gitignore updated to exclude __pycache__/ directories generated by running tests
+- NOTE's push-only sync behavior (vs. full push+ff-main like CHECKPOINT/COMMIT) was re-examined this session via explicit pros/cons; decision held: keep NOTE push-only — the cost of a --push-only flag in the sync script is cheaper than needless main-churn on every single note
+- git_sync.py built (source + library-root deployed copies, byte-identical): sync(operation_label, push_only, cwd) pushes the current branch, then either skips (push-only or already-on-main), fast-forwards main cleanly, or reports diverged without ever forcing a merge; every outcome is logged to a new logs/git-sync.log
+- ai-library-ops SKILL.md bumped to v9: CHECKPOINT Step 6.3, COMMIT Step 5, and NOTE's push step now each call git_sync.py instead of inlining bash; description/changelog and Rules section updated; all three deployed copies (source, .claude/skills/, code/ root) kept byte-identical, verified via md5sum
+- A real bug was found and fixed while live-testing git_sync.py against throwaway local git repos (not the production repo): stale local main left over from a prior checkout caused a genuinely diverged origin/main to be misclassified as push-failed instead of diverged — origin/main was never actually overwritten in either case, but the reported status was wrong; fixed by resetting local main to origin/main (git checkout -B main origin/main) immediately after the fetch, so the ff-only check always evaluates the true current remote state
+- git_sync.py verified against four live scenarios in isolated throwaway repos before being used on the real repository: clean fast-forward, diverged main (correctly refuses to force, correctly classified after the fix), push-only mode (NOTE case, main untouched), and already-on-main no-op
+- git_sync.py committed (fcf23ea) and then used on itself for the first real production sync (python3 code/git_sync.py ai-library-system COMMIT) — pushed claude/resume-wkc9dz, fast-forwarded main cleanly, logged correctly to logs/git-sync.log
+- logs/git-sync.log added as a new operational log file, following the same pipe-delimited plain-text convention as logs/checkpoint-runs.log; gitignored like the rest of logs/ — no tracked exception was added for it, unlike checkpoint-runs.log
+- Building test_git_sync.py (automated regression coverage for the new script) was explicitly deferred this session — the extraction and live-verification were treated as one combined step, separate from and prior to building its test suite, per direct user instruction
+- test_git_sync.py built this session: 17 stdlib-unittest cases — a FakeGit harness (keyed by exact argv tuple) covering get_current_branch, push_branch, fast_forward_main's three classification branches, and sync's full orchestration logic with zero real git calls, plus log_result tests against a temp dir, a main() arg-count exit test, and two real-throwaway-repo regression tests (clean fast-forward, and the diverged-main bug fixed earlier this session) confirming origin/main is provably untouched when diverged
+- test_git_sync.py committed (66c72a5), deployed byte-identically to code/ and projects/ai-library-system/code/, registered in MAP.md under both code/ sections, and used immediately afterward via git_sync.py COMMIT to sync and fast-forward main cleanly
+- The deployed MASTER-PROMPT.md must contain the prompt body only — the artifact's self-describing 'ARTIFACT vNN' label and separator are stripped at deploy time, because CLAUDE.md @-imports the file verbatim as the Layer 2 system prompt
+- The MASTER-PROMPT.md label-leak was a long-dormant defect, not a recent break: the deploy cp'd the self-describing (labelled) artifact file; this was harmless while Layer 2 was a manual paste, but became live at v28 when Layer 2 switched to CLAUDE.md @MASTER-PROMPT.md verbatim import; NO-CHANGE checkpoints then skipped the manual cp, freezing the embedded version (v28->v29 patched at v30; v31 frozen through v34)
+- checkpoint.py auto-deploys the label-stripped artifact body to declared targets on every checkpoint (NO CHANGE included) via strip_artifact_label() + deploy_artifact(), so the deployed copy can no longer drift or carry a stale version stamp
+- Deploy targets are declared per-project in a plain-text projects/<slug>/.deploy marker (one library-root-relative path per line); projects/ai-library-system/.deploy -> MASTER-PROMPT.md; .deploy is added to the pre-commit EXCLUDED set
+- pre-commit check_master_prompt_sync() is a regenerate-and-diff guard: when a staged file is a deploy artifact or its declared target, that target must byte-equal strip_artifact_label(latest artifact); it is scoped to staged prompt source/output only, so unrelated commits and the transitional stale state are never blocked
+- The guard follows the standard 'touch source -> regenerate -> fail if stale' pre-commit pattern; it was chosen over the weaker 'deployed file must not start with an ARTIFACT label' prefix-check because it also catches staleness, partial copies, and hand-edits
+- The deployed MASTER-PROMPT.md is unversioned (no ARTIFACT banner); the version lives in the triplet, THREAD.md, and git
+- The MASTER-PROMPT.md checkpoint-ritual save-step 3 was rewritten at v35: the manual 'cp v[NN]--artifact.md MASTER-PROMPT.md' is replaced by the checkpoint.py auto-deploy description, with an explicit prohibition on cp'ing the artifact over MASTER-PROMPT.md
+- ai-library-ops SKILL.md bumped to v10: Step 5's manual cp removed (it re-leaked the label after checkpoint.py's auto-deploy) and replaced with an auto-deploy note; deployed byte-identical to all three SKILL.md copies
+- test_checkpoint.py extended with strip_artifact_label, deploy_artifact, and a NO-CHANGE end-to-end deploy case; test_pre_commit.py added (8 stdlib cases run against throwaway git repos, covering the guard's five scenarios plus adjacent wrapper/version checks); full suite now 64 tests
+- Web best-practice review validated the design: single-source-of-truth for generated files and the pre-commit regenerate-and-diff pattern are industry standard; the dominant 'use an artifact repository, don't commit generated files' view does not apply here because CLAUDE.md @-import reads the file from the checked-out tree (no build step or registry in the loop) and the library rules out registries — so an in-repo generated file guarded by a sync check is the correct analog
+- A full system audit at v34 was produced (projects/ai-library-system/docs/2026-06-29--system-audit--claude.md): findings A (MASTER-PROMPT label leak), B/C (flow-vs-ai code/ leak + broken MAP link), D (inactive hook in fresh clones), E-I (drift); it surfaces issues only
+- The pre-commit hook is wired per-clone via core.hooksPath=code/githooks; the ai-library-ops skill bootstraps this on its first operation, so fresh cloud/iOS clones self-activate validation
+- MAP.md staleness corrected: ai-library-ops entry updated (v5 -> v9 -> v10), and entries added for test_pre_commit.py, code/githooks/pre-commit, and the .claude/skills/ai-library-ops cloud-autoload copy
+- code/kurgan-rostok/SKILL.md was restored from source (it had been renamed to _SKILL.md.deprecated, breaking the deploy and the MAP link) — a non-destructive fix
+- Reversal of the v35 strip decision (user direction): the deployed MASTER-PROMPT.md is the artifact VERBATIM, keeping its self-describing 'ARTIFACT vNN' label — the label is load-bearing (it shows the operative version inside the live prompt and keeps the deployed file consistent with the v12 self-describing-artifact convention); checkpoint.py deploy and the pre-commit guard both copy/compare byte-for-byte, and strip_artifact_label() was removed from both scripts
+- The label-leak regression's real fault was staleness (a skipped manual deploy), not the presence of the label; auto-deploy + the regenerate-and-diff guard fix staleness, so the version label is kept safely and the design is simpler (deploy = literal copy, guard = literal compare)
+- MASTER-PROMPT.md checkpoint-ritual save-step 3 reworded at v36 from 'label-stripped body' to 'artifact verbatim, ARTIFACT vNN label included'
+- ai-library-ops SKILL.md v11: Step 5 describes verbatim deploy (label kept), reversing v10's strip wording; all three SKILL.md copies kept byte-identical
+- test_checkpoint.py/test_pre_commit.py updated for verbatim (deployed == latest artifact, label included); the three strip-helper tests were removed; full suite is 53 tests
+RULED OUT:
+- Any proprietary file format
+- Any platform as source of truth
+- Recommending specific cloud storage
+- Implementing Layers 2-5 before Layer 1 is proven
+- research/ and creative/ as top-level folders
+- PHILOSOPHY section in context files
+- Duplicating origin or file lists across multiple files
+- META section in THREAD.md and MAP.md — derived from content or git
+- Optional sections in schemas — either mandatory or absent
+- VOICE and CONSTRAINTS as separate sections in persona.md
+- Newest-first ordering in THREAD.md
+- Resuming from instructions file alone — insufficient context
+- Blocking on MAP.md missing entry — warn only, legitimate during active sessions
+- Blocking on context/instructions section headers — warn only
+- Pre-commit hook checking itself — .py files have no frontmatter or vNN requirement
+- Warn-only for triplet and version mismatch — both are blocking errors
+- Remote git for now — iCloud provides sufficient off-site redundancy
+- API tier for Layers 1 and 2 — consumer apps are correct tier, cost prohibitive at API
+- Updating ARCHITECTURE.tex and USER-GUIDE.tex before system is scripted live
+- Cloud-native platforms for personal library use
+- Layer 2 session start simplification — all four RESUME files still required
+- scripts/ as folder name — renamed to code/ for consistency
+- Clipboard as default input mode for checkpoint.py — file path is more robust
+- checkpoint.py steps 10–11 as originally designed — reference eliminated schema elements
+- checkpoint.py artifact extension as CLI argument — always .md for this system
+- checkpoint.py executing git commands — prints them for user to run
+- Cloud-native execution of checkpoint.py at this stage — Layer 5 concern
+- Four-backtick outer fence for ARTIFACT block — replaced by tilde fence
+- Saving checkpoint input file outside library folder — temp/ replaces this
+- Printing CHECKPOINT FILE block in chat — replaced by downloadable file saved to temp/
+- Previous ruling against artifact label line reversed — artifact files are self-describing by same convention
+- Manual THREAD.md editing for NOTE entries — use add_note_thread.py instead
+- Blocking integrity validation — warn only, write proceeds
+- MASTER-PROMPT.md in SHA-256 manifest — changes legitimately at every MASTER-PROMPT checkpoint, would generate false tamper warnings
+- ~/Documents/ as library location — macOS privacy restrictions block terminal access without explicit permission grant
+- Folder name with spaces (e.g. "AI Library") — requires shell quoting, avoided in favour of hyphen convention
+- Git branch as fork mechanism — fork is independent, not intended for merging back
+- iCloud Drive as git working directory — sync conflicts with .git internals
+- Manual terminal operations for CHECKPOINT, NOTE, and COMMIT in Cowork sessions — ai-library-ops skill handles all three
+- Writing to paths outside ~/Claude/Projects/AI-Library/ from any library script — self-containment principle
+- Path('.').rglob() for library discovery in skill context — CWD-dependent, replaced by find /sessions
+- ### Heading / Path: / Summary: block format for MAP.md project entries — doesn't match actual file convention; use ## projects/[slug]/ section with bullet items
+- Character count heuristics on JSONL transcript for context threshold detection — overcount by ~2x due to metadata overhead
+- Output behaviour signals as sole compression detection mechanism — not reliably distinguishable from normal deep-tool-chain patterns
+- Context pressure events logged in THREAD.md — operational telemetry does not belong in project thread
+- Manual CONTEXT CHECK as primary detection mechanism — automatic per-operation status is more reliable; user won't remember to run it when needed most
+- Context pressure log in temp/ — too ephemeral for useful operational history; logs/ is persistent but excluded from git
+- session_info for self-monitoring of current session — list_sessions does not surface the active session; no direct token count available from within a running session
+- Slash-containing display text in MAP.md bullet entries — triggers false positive in pre-commit path check
+- Out-of-band fixes to library files without explicit user approval — kernel rule, no exceptions; surface, design, approve, then implement through correct path
+- Management interface as a separate project construct — not needed; ai-library-system serves this role at design time; users decide how to evolve it after shipping
+- Developer mode / user mode distinction for shipped library — unnecessary complexity; library ships as-is with full history intact
+- --no-verify as escape hatch for MASTER-PROMPT.md write protection — bypasses all hook checks simultaneously; env var pattern (ALLOW_MASTER_PROMPT_WRITE=1) is surgical alternative
+- Two-mode checkpoint design (--light flag) — splits content generation between script and AI; complicates future API port; rejected in favour of NO CHANGE sentinel
+- Auto-generating THREAD ENTRY in checkpoint.py — crosses content boundary; AI owns all content blocks; checkpoint.py owns all mechanics
+- Pushing to GitHub from the live Cowork folder — ruled out; fork to a fresh copy keeps the Cowork baseline pristine
+- Local clone or syncing working copy on the Mac for the GitHub fork — ruled out; pure-cloud move via manual upload
+- Parallel live use of the Cowork and GitHub copies — ruled out unless one supersedes the other; single active writer at a time
+- Splitting the v28 genesis import into 28+ separate per-version commits — ruled out as unnecessary; the pre-commit hook's own message names --no-verify as the intended escape hatch for exactly this one-time bulk-import case
+- Fixing every pre-commit warning surfaced by the v28 import before committing — ruled out for this session; only the two real gaps (CLAUDE.md exclusion, schemas doc frontmatter position) were fixed, the version-mismatch behaviour is correct for steady-state and was left as-is
+- Fixing the cross-project MAP.md/THREAD.md tamper-detection blind spot by comparing against the most recent manifest across all projects — ruled out; would just rebuild what git log/git diff already does natively, with more code and more failure modes
+- Keeping the SHA-256 manifest as a redundant secondary integrity layer alongside durable GitHub history — ruled out; no offsetting benefit once git provides full diff history, only maintenance burden and false positives
+- Deleting the 19 historical temp/v*-manifest.json files as part of this removal — ruled out; they are already-committed audit records of past checkpoints, not live state, and the removal is scoped to the code mechanism going forward
+- Treating ARCHITECTURE.tex/USER-GUIDE.tex documentation claims as correct without checking them against current script source — ruled out this session; every behavioural claim was re-verified against checkpoint.py/pre-commit.py directly, repeatedly, since errors survived even a careful first fix pass
+- Best-effort git branch auto-delete after a successful fast-forward — ruled out after live testing; the cloud session git proxy returns HTTP 403 on branch deletion in every environment this skill actually runs in, making the feature dead weight everywhere it would run, with no observed benefit
+- Embedding a full push+checkout-main+merge --ff-only+push+checkout-back sync into the NOTE operation, identical to CHECKPOINT/COMMIT — ruled out after explicit critique against the artifact's own design spirit; NOTE is deliberately the lowest-ceremony, highest-frequency operation, and giving it CHECKPOINT-weight git plumbing increases merge-conflict exposure precisely where it's least appropriate and contradicts MASTER-PROMPT.md's own description of NOTE as appendable "at any time without a checkpoint"
+- Trusting a documented procedure fix as correct without exercising it — ruled out for this session's SKILL.md changes; both the original gap (NOTE missing push) and the revert (NOTE push-only) were confirmed by running real commands and inspecting actual git state (branch vs. origin/main hashes), not by re-reading the edited prose alone
+- A separate git repository for ai-library-system's tests/scripts — ruled out; user explicitly declined, citing the project's own established source-colocation convention and added cross-repo sync risk; CI workflow files, dependency manifests, and tests/ directory sprawl, not test files themselves, are treated as the actual signal of "becoming a software project"
+- The previously-floated optional verbatim style-anchor excerpt field for context.md — downgraded from candidate enhancement to ruled out; the signal-lost prose-voice gap was an artifact of this session's own thin authoring during a short test, not a structural schema limitation
+- "Observability AI agent as storage" — using an observability/agent platform as the library's memory layer, analogous to using GitHub for memory — ruled out; wrong tool, introduces vendor lock-in the library's design has otherwise avoided
+- Logging added directly as text inside SKILL.md's bash prose blocks, without first extracting the underlying logic into a script — ruled out; reproduces the exact failure mode it's meant to fix, since an agent can forget to also log a step exactly as it can forget to run it
+- JSON Lines as the format for the new git-sync log — ruled out in favour of plain pipe-delimited text, to stay consistent with the library's one existing operational log rather than introducing a second, differently-structured format
+- Folding NOTE's sync behavior into the same full push+fast-forward-main call used by CHECKPOINT/COMMIT — reconsidered this session via explicit pros/cons; decision held: keep NOTE push-only via a --push-only flag, since the operational cost of main-churn on every note outweighs the small code-complexity cost of one boolean parameter
+- Building test_git_sync.py in this session — deferred per explicit user instruction to treat the SKILL.md rewrite plus script extraction as one combined step first, separate from and prior to building its test suite
+- Mocking subprocess.run directly for git_sync.py's tests — ruled out in favour of patching the module's own run_git() function, which keys fakes on exact argv tuples and reads far closer to the real call sites than a subprocess-level patch would
+- A tests/ subdirectory with fixtures/conftest for git_sync.py's real-repo cases — ruled out per the existing binding repo-scope constraint; the two real-git tests build and tear down their throwaway repos inline in a tempdir, no shared fixture machinery added
+- Manual cp deploy of MASTER-PROMPT.md (cp v[NN]--artifact.md MASTER-PROMPT.md) — ruled out and explicitly prohibited in both the ritual and SKILL.md; it copies the self-describing label into the verbatim-loaded prompt and is skipped on NO-CHANGE checkpoints, the two faults behind the label-leak regression; replaced by checkpoint.py auto-deploy
+- A versioned banner in the deployed MASTER-PROMPT.md (an always-current ARTIFACT label line) — ruled out in favour of an unversioned deployed body; the deployed kernel carries no wrapper, and the version lives in the triplet/THREAD/git
+- The weaker deploy guard ('MASTER-PROMPT.md must not start with ARTIFACT vNN') — ruled out in favour of the regenerate-and-diff guard, which subsumes it and catches every drift mode
+- Deleting the orphaned flow-vs-ai code/ (code/kurgan, code/rostok, code/schemas) as routine cleanup — ruled out for now; they hold flow-vs-ai's newest decomposed deliverables (v04-v06 split skills, JSON schema, validator, fixtures) which have no projects/flow-vs-ai/code/ source (an inverted source-of-truth), so disposition is deferred to a flow-vs-ai session rather than discarded from the control session
+- Inverting the model so root MASTER-PROMPT.md is the source and the artifact is derived from it — ruled out; it breaks the triplet / separation-of-duties model the checkpoint system rests on
+- Stripping the 'ARTIFACT vNN' label from the deployed MASTER-PROMPT.md (the v35 'unversioned deployed body' design) — reversed at v36 per explicit user direction; the label is load-bearing (version visibility in the live prompt + consistency with the self-describing-artifact convention), and the staleness it was blamed for is handled by auto-deploy + the guard, not by removal. This supersedes the v35 RULED OUT entry that had ruled out a versioned deployed file
+OPEN:
+- related: fields use bare filenames — pre-commit hook warning not yet added
+- Lightweight metadata convention for project triplet files not yet defined
+- MAP.md machine-readable block not yet added
+- Artifact type schema for MASTER-PROMPT.md (.md prompt type) not yet formally written
+- Layer 4 embedding model and vector store not yet chosen
+- Claude Code execution layer not yet implemented
+- iCloud passive backup (rsync) not yet added to checkpoint.py or workflow
+- USB-C 2TB SSD backup not yet configured
+- pre-commit.py MASTER-PROMPT.md write protection deferred — env var bypass pattern agreed; revisit before GitHub publication
+- DELTA design for checkpoint.py: Python-side append-only merge for CONTEXT verbatim reproduction — not yet implemented
+- Whether to fold logs/git-sync.log into logs/checkpoint-runs.log, or keep them separate — currently separate
+- flow-vs-ai source-of-truth inversion: the decomposed v04-v06 deliverables (split kurgan/rostok skills, JSON schema, validator, fixtures) live only in the library-root code/ deploy + git history, not in projects/flow-vs-ai/code/; fix within a flow-vs-ai session — subsumes the older temp/ cleanup item
+- check_map_integrity false-positives: the regex matches path-like strings inside MAP.md description prose (e.g. 'kurgan/SKILL.md' in a summary), not just link targets; scope it to markdown link targets
+- Eval / quality gate before a new MASTER-PROMPT.md is deployed (industry prompt-management practice); the library currently deploys immediately with git rollback only
+- Whether kurgan-rostok should remain a library-wide deployed skill in code/ root at all
+- "Streaming human-LLM interaction as a resumable memory layer" idea — explicitly paused by the user; revisit only if re-raised
+STATE:
+- v36: the deploy was reversed to verbatim — MASTER-PROMPT.md keeps its 'ARTIFACT vNN' label and shows the live version; it was healed by this checkpoint's own verbatim auto-deploy and now reads 'ARTIFACT v36' on its first line
+- strip_artifact_label() was removed from checkpoint.py and pre-commit.py; deploy_artifact writes the artifact file byte-for-byte and the pre-commit guard compares the target to the latest artifact verbatim; suite at 53 tests, all green, deployed byte-identical
+- ai-library-ops SKILL.md is at v11 (verbatim wording); the v35 'unversioned deployed body' decision is explicitly reversed and recorded
+- All other v35 state carries forward: the deploy mechanism + .deploy marker + regenerate-and-diff guard, the v34 system-audit doc, the MAP.md/hook fixes, and the deferred flow-vs-ai code/ source-of-truth inversion

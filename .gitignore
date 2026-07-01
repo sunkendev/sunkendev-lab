@@ -1,0 +1,7 @@
+.claude/*
+!.claude/skills/
+temp/*
+logs/*
+!logs/checkpoint-runs.log
+.DS_Store
+__pycache__/

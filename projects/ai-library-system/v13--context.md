@@ -1,0 +1,127 @@
+CONTEXT v13
+-----------
+PROJECT: AI Document Library System — a five-layer vendor-agnostic plain-text library for managing AI-generated work.
+
+DECISIONS:
+- Plain Markdown as universal format
+- YAML frontmatter as metadata standard
+- Two-digit version numbers (v01...v99) for correct lexicographic sort
+- Three-file checkpoint triplet: artifact, context, instructions
+- THREAD.md as project spine, one per project folder
+- MAP.md at library root as single traversal index
+- Master prompt as sole control mechanism
+- Layer 1 mandatory; all other layers optional and additive
+- Library folder is storage-agnostic
+- LaTeX for formal reference documents
+- docs/ and code/ live inside each project folder, not at root
+- inbox/ is the only non-project folder at root besides MAP.md and reference docs
+- research/ and creative/ folders eliminated
+- Frontmatter type field values: document | code | context
+- Context file schema: PROJECT, DECISIONS, RULED OUT, OPEN, STATE — in that order
+- Instructions file schema: PROJECT, GOAL, BACKGROUND, ARTIFACT STATE, KEY DECISIONS, OPEN QUESTIONS, EXPLICITLY RULED OUT, NEXT TASK, PERSONA, STYLE AND CONSTRAINTS
+- DECISIONS and RULED OUT are append-only in both context and instructions files
+- ORIGIN removed from context schema — episodic history belongs in THREAD.md
+- Master prompt checkpoint ritual updated to enforce all three block schemas
+- v01 and v02 files treated as pre-schema legacy
+- Artifact type schemas defined per type at time of first use
+- THREAD.md schema: TITLE, STARTED, DESCRIPTION, PERSONA, CHECKPOINT LOG — ascending order
+- THREAD.md status values: active | paused | complete | archived
+- Latest checkpoint derived from last log entry, not stored in META
+- MAP.md schema: TITLE, ROOT, PROJECTS — no META, no duplicate entries
+- persona.md schema: ROLE, DOMAIN, BEHAVIOUR, EXAMPLES — all mandatory
+- persona.md has no frontmatter — it is a project file not a standalone document
+- VOICE and CONSTRAINTS merged into BEHAVIOUR in persona.md schema
+- EXAMPLES mandatory in persona.md — specific detailed personas outperform generic ones
+- Git as foundation for Layer 3 — local git first, remote later
+- Pre-commit hook as primary validation mechanism
+- vNN prefix retained for human readability alongside git history
+- Checkpoint = major milestone commit; routine sessions = git commits without full triplet
+- Git initialised — first commit 5a20741 on main branch
+- Library stored in iCloud at ~/AI-Library (iCloud)
+- RESUME procedure requires four files in order: persona.md, THREAD.md, context, instructions
+- .git folder and .DS_Store excluded from MAP.md
+- Post-checkpoint instructions embedded in MASTER-PROMPT.md
+- Pre-commit hook written, installed, and tested — operational
+- Triplet lockstep enforced: any vNN file staged requires all three at same version
+- Version mismatch within same project folder blocks commit
+- Block on structural violations; warn on advisory checks
+- MAP.md integrity check: warns if referenced path does not exist on disk
+- THREAD.md order check: warns if checkpoint headers are out of ascending order
+- Exclusions centralised in EXCLUDED set in pre-commit script
+- code/ folder at library root for deployed operational scripts
+- projects/ai-library-system/code/ is source and development environment for all library scripts
+- Flow is project → library: develop and version in project, deploy to code/ at library root
+- projects/ai-library-system/ is the control panel for the library system itself
+- Layer 2 implemented by placing full MASTER-PROMPT.md and persona.md in platform workspace system prompt
+- Layer 2 is consumer app tier only — API cost prohibitive for this use case
+- NOTE format added to THREAD.md schema for inter-checkpoint working notes
+- After appending a NOTE, THREAD.md must be committed immediately before proceeding
+- checkpoint.py designed, built, tested, and fully operational
+- checkpoint.py uses sentinel walk (MAP.md) for library root discovery
+- checkpoint.py input: required positional argument — path to text file containing checkpoint output
+- checkpoint.py dry-run is default; --write executes
+- checkpoint.py artifact extension hardcoded to .md
+- checkpoint.py parses tilde fence first for all blocks; four-backtick and three-backtick as fallbacks
+- checkpoint.py strips leading separator lines from extracted block content
+- checkpoint.py extracts MAP.md summaries from THREAD ENTRY fields
+- checkpoint.py does not execute git — prints commands for user to run
+- checkpoint.py source: projects/ai-library-system/code/checkpoint.py
+- checkpoint.py deployment: code/checkpoint.py at library root
+- ARTIFACT outer fence is tilde (~~~) — never collides with inner backtick fences
+- checkpoint.py input file must be saved outside the library folder
+- Version guard added to checkpoint ritual — THREAD.md required before proceeding
+- pre-commit hook artifact check corrected — non-empty check only, no label check
+- First successful end-to-end checkpoint.py live test completed at v10
+- related: fields in standalone docs use bare filenames not relative paths
+- Project triplet files have no frontmatter — lightweight metadata convention needed before Layer 4
+- MAP.md needs machine-readable block before Layer 5 / MCP work
+- Artifact, context, and instructions files all begin with label line and separator — self-describing by convention
+- Label and separator consumed by parse_blocks() are reconstructed by checkpoint.py on write for all three file types
+- Separator width equals label width — consistent across all files on disk
+- Checkpoint file delivered as downloadable .txt file — CHECKPOINT FILE printed block eliminated
+- Checkpoint ritual produces single downloadable file; save instructions reduced to five steps
+- Claude Code evaluation prompt pattern established as reusable technique for external code review
+- Layer 2 workspace system prompt update is a mandatory step whenever the artifact is MASTER-PROMPT.md
+
+RULED OUT:
+- Any proprietary file format
+- Any platform as source of truth
+- Recommending specific cloud storage
+- Implementing Layers 2-5 before Layer 1 is proven
+- research/ and creative/ as top-level folders
+- PHILOSOPHY section in context files
+- META section in THREAD.md and MAP.md
+- Optional sections in any schema
+- Newest-first ordering in THREAD.md
+- Resuming from instructions file alone — insufficient context
+- Blocking on MAP.md missing entry — warn only
+- Blocking on context/instructions section headers — warn only
+- Pre-commit hook checking itself
+- Warn-only for triplet or version mismatch — hard blocks
+- Remote git for now
+- API tier for Layers 1 and 2
+- Updating ARCHITECTURE.tex and USER-GUIDE.tex before system is scripted live
+- Cloud-native platforms for personal library use
+- scripts/ as folder name — code/ throughout
+- Clipboard as default input for checkpoint.py
+- checkpoint.py artifact extension as CLI argument
+- checkpoint.py executing git commands
+- Cloud-native execution of checkpoint.py at this stage
+- Four-backtick outer fence for ARTIFACT block
+- Saving checkpoint input file inside library folder
+- Printing CHECKPOINT FILE block in chat — replaced by downloadable file
+- Previous ruling against artifact label line reversed — artifact files are self-describing by same convention as context and instructions
+
+OPEN:
+- ARCHITECTURE.tex discrepancies not yet corrected
+- USER-GUIDE.tex not yet rewritten
+- related: fields use bare filenames — pre-commit hook warning not yet added
+- Lightweight metadata convention for project triplet files not yet defined
+- MAP.md machine-readable block not yet added
+- .mcp-config.json example in ARCHITECTURE.tex lists eliminated folders
+- checkpoint.py extension handling if non-.md artifact ever needed
+
+STATE:
+- MASTER-PROMPT.md v13: Layer 2 system prompt update added as mandatory post-checkpoint step
+- All Layer 3 tooling operational and verified through v12 live test
+- Layer 2 workspace system prompt pending update to v13

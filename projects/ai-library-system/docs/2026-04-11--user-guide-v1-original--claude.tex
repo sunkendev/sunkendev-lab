@@ -1,0 +1,1297 @@
+% ---
+% title: AI Document Library — User Guide (v1, original)
+% date: 2026-04-11
+% updated: 2026-06-28
+% type: document
+% vendor: claude
+% model: claude-sonnet-4-6
+% tags: [user-guide, superseded, v1-original, historical]
+% related: [USER-GUIDE.tex]
+% ---
+% SUPERSEDED 2026-06-28. This is the original USER-GUIDE.tex, written
+% 2026-04-11 for a clipboard-copy-paste workflow: pasting MASTER-PROMPT.md
+% and the four RESUME files into a chat box by hand. That workflow no
+% longer exists — RESUME, CHECKPOINT, NOTE, COMMIT, and NEW PROJECT are
+% now all file-based operations run by the ai-library-ops skill, and
+% CLAUDE.md auto-loads MASTER-PROMPT.md in Claude Code / cloud / iOS
+% sessions. This document is more stale than ARCHITECTURE.tex was —
+% it is frozen at roughly v01/v02 of the project. Archived as the
+% historical record of the original copy-paste-era design. See
+% USER-GUIDE.tex at the library root for the current guide. Not
+% maintained going forward.
+
+\documentclass[12pt,letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{mdframed}
+\usepackage{hyperref}
+\usepackage{enumitem}
+
+
+\usepackage{tocloft}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{multirow}
+
+\geometry{
+  top=1.25in,
+  bottom=1.25in,
+  left=1.25in,
+  right=1.25in
+}
+
+\definecolor{codebg}{RGB}{245,245,243}
+\definecolor{codeborder}{RGB}{200,198,190}
+\definecolor{notebg}{RGB}{255,252,235}
+\definecolor{noteborder}{RGB}{200,185,100}
+\definecolor{warnbg}{RGB}{255,245,245}
+\definecolor{warnborder}{RGB}{200,100,100}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  framesep=6pt,
+  rulecolor=\color{codeborder},
+  breaklines=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  columns=flexible,
+  xleftmargin=6pt,
+  xrightmargin=6pt,
+  aboveskip=8pt,
+  belowskip=8pt
+}
+
+\mdfdefinestyle{notebox}{
+  backgroundcolor=notebg,
+  linecolor=noteborder,
+  linewidth=1pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=10pt,
+  innerbottommargin=10pt,
+  skipabove=10pt,
+  skipbelow=10pt
+}
+
+\mdfdefinestyle{warnbox}{
+  backgroundcolor=warnbg,
+  linecolor=warnborder,
+  linewidth=1pt,
+  innerleftmargin=12pt,
+  innerrightmargin=12pt,
+  innertopmargin=10pt,
+  innerbottommargin=10pt,
+  skipabove=10pt,
+  skipbelow=10pt
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{AI Library --- User Guide}}
+\fancyhead[R]{\small\texttt{Layer 1 Foundation}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat{\section}{\large\bfseries}{}{0em}{\thesection\quad}[\vspace{2pt}\hrule\vspace{4pt}]
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection\quad}{0em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{\thesubsubsection\quad}{0em}{}
+
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\setlist[itemize]{topsep=4pt, itemsep=3pt, parsep=0pt, leftmargin=1.4em}
+\setlist[enumerate]{topsep=4pt, itemsep=3pt, parsep=0pt, leftmargin=1.6em}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  urlcolor=black,
+  bookmarksnumbered=true
+}
+
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% ---------------------------------------------------------------
+
+\begin{document}
+
+% Title page
+\begin{titlepage}
+\centering
+\vspace*{1.5in}
+{\Huge\bfseries AI Document Library}\\[12pt]
+{\Large User Guide}\\[6pt]
+{\large Layer 1 Foundation --- Plain Text System}\\[24pt]
+\hrule height 0.8pt
+\vspace{16pt}
+{\normalsize
+A complete system for storing, versioning, navigating, and resuming\\
+AI-generated work across any model, any vendor, and any time horizon.\\
+No application required. No platform dependency. No expiry.
+}
+\vspace{16pt}
+\hrule height 0.4pt
+\vspace{32pt}
+{\small Version 1.0 \quad --- \quad \today}
+\vfill
+{\footnotesize
+\texttt{AI-Library/USER-GUIDE.tex}\\
+Plain text. Open format. Read in any decade.
+}
+\end{titlepage}
+
+\newpage
+\tableofcontents
+\newpage
+
+% ---------------------------------------------------------------
+\section{Philosophy and Foundational Principles}
+
+\subsection{The Core Problem This System Solves}
+
+Every AI-assisted knowledge workflow faces the same structural failure: context
+is lost the moment a session ends. The AI that helped you develop an argument,
+refine a draft, or explore a research question retains nothing when the
+conversation closes. The next session begins from zero.
+
+The naive solution is to rely on platform memory features, project workspaces,
+or cloud-based AI tools that promise persistent context. These solutions fail in
+the medium to long term because they are owned by vendors. Platform memory
+features change, get paywalled, or disappear in product updates. Workspaces
+created on one platform cannot be transferred to another. The organisation of
+your work is held hostage to a service you do not control.
+
+This system solves the problem at the foundation. Every piece of context,
+every version of an artifact, every decision made, and every instruction for
+resuming a project is stored in plain text files that you own, organised in a
+folder structure you control, in a format that any human or any AI can read
+without any intermediary tool.
+
+\subsection{The File is the Truth}
+
+The governing principle of this system is: \textit{the file is the truth, not the
+application.} All intelligence about a project lives inside the files themselves,
+not in a database, not in an application's state, not in a vendor's memory system.
+
+This principle has several practical consequences:
+
+\begin{itemize}
+  \item Moving a file preserves all of its context because the context is embedded
+        in the file via frontmatter and structured sections.
+  \item Sharing a project means sharing a folder. The recipient needs no account,
+        no application, and no explanation beyond ``read THREAD.md first.''
+  \item Switching AI vendors mid-project costs nothing. The new AI reads the
+        instructions file and picks up where the previous AI left off.
+  \item The library cannot be lost due to a service outage, account suspension,
+        pricing change, or company acquisition.
+\end{itemize}
+
+\subsection{Why Plain Text Survives Generations}
+
+Plain text files from the 1970s remain perfectly readable today on any modern
+computer without conversion, emulation, or special software. No other digital
+format can make this claim. PDF requires a PDF renderer. Word documents require
+Microsoft Office or a compatible application. Proprietary database formats require
+the originating software. Plain text requires only the ability to read characters.
+
+Markdown extends plain text with a small set of conventions for formatting
+(headings, lists, emphasis, code blocks) that are equally legible when the
+formatting is not rendered. A Markdown file read as raw text in a terminal
+is as comprehensible as one rendered in a Markdown editor. This is not true
+of any other formatted document standard.
+
+YAML frontmatter --- the metadata blocks used in this system --- is itself
+plain text. It requires no parser to be human-readable. An AI model reading
+a file with YAML frontmatter understands the metadata without being instructed
+on how to parse it.
+
+\subsection{The Checkpoint Discipline}
+
+The second governing principle is: \textit{externalise memory before it is lost,
+not after.}
+
+AI context windows compress and lose fidelity as conversations grow longer.
+The model you are working with in a long session has a degraded understanding
+of decisions made early in the conversation compared to its understanding of
+recent exchanges. This compression is not visible to the user. The model will
+continue to produce outputs that appear coherent while quietly misremembering
+earlier decisions.
+
+The checkpoint ritual exists to counteract this. At regular intervals, you
+ask the AI to produce a complete state dump of everything it knows, a full
+copy of the current artifact, and a structured instruction set for resuming
+the work in a new session. The checkpoint is called before compression becomes
+severe, not after.
+
+The three artifacts produced at each checkpoint correspond to three different
+types of knowledge:
+
+\begin{enumerate}
+  \item The \textbf{artifact} captures what has been built.
+  \item The \textbf{context} captures what has been established and decided.
+  \item The \textbf{instructions} capture how to continue.
+\end{enumerate}
+
+No single artifact contains all three types of knowledge. All three must be
+saved together at each checkpoint.
+
+\subsection{Why the System is Generational}
+
+A project folder created today under this system will be fully navigable by
+a human or an AI in twenty years, fifty years, or a hundred years, subject
+to one condition: the files are stored on a medium that can be read.
+
+The folder structure is self-documenting. \texttt{THREAD.md} narrates the
+arc of the work. Version-numbered files make the progression explicit.
+The frontmatter on each file provides provenance. The resume block in each
+instructions file provides a re-entry point.
+
+A person who has never seen this system before can open any project folder,
+read \texttt{THREAD.md}, and understand what was done, why, and where it
+stands --- without reading any other file first.
+
+An AI model that has never been introduced to this system can receive the
+master prompt at the start of a session and be fully operational within
+the library immediately.
+
+This combination --- human navigability and AI operability, both from
+plain text alone --- is what makes the system generational.
+
+% ---------------------------------------------------------------
+\section{System Architecture}
+
+\subsection{The Three Layers}
+
+The AI Library system is designed in three layers of increasing automation.
+This user guide covers Layer 1 only. Layers 2 and 3 are described briefly
+for context but are not covered in this document.
+
+\begin{center}
+\begin{tabular}{@{}lp{4cm}p{6.5cm}@{}}
+\toprule
+\textbf{Layer} & \textbf{Name} & \textbf{Description} \\
+\midrule
+1 & Foundation & Plain text files, folder structure, master prompt,
+                 manual checkpoint ritual. Full control from the prompt.
+                 No tooling required beyond a text editor. \\
+\addlinespace
+2 & Session & Claude Projects or equivalent platform workspace.
+              Persona loaded automatically. Session memory handled by platform.
+              Layer 1 files remain the permanent record. \\
+\addlinespace
+3 & Automation & MCP (Model Context Protocol) client reads the library folder
+                 directly. Checkpoints scripted. Navigation automated.
+                 Layer 1 files remain the truth. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{mdframed}[style=notebox]
+\textbf{Note:} Layer 1 is the only mandatory layer. Layers 2 and 3 add
+convenience but do not change the fundamental structure. A library built on
+Layer 1 remains fully functional if Layers 2 and 3 are never implemented.
+\end{mdframed}
+
+\subsection{The Folder Hierarchy}
+
+The complete folder structure for the AI Library is as follows:
+
+\begin{lstlisting}
+AI-Library/
+|-- MAP.md
+|-- MASTER-PROMPT.md
+|-- USER-GUIDE.tex
+|-- projects/
+|   |-- [project-slug-a]/
+|   |   |-- THREAD.md
+|   |   |-- persona.md
+|   |   |-- v01--artifact.tex
+|   |   |-- v01--context.md
+|   |   |-- v01--instructions.md
+|   |   |-- v02--artifact.tex
+|   |   |-- v02--context.md
+|   |   `-- v02--instructions.md
+|   `-- [project-slug-b]/
+|       |-- THREAD.md
+|       |-- persona.md
+|       `-- v01--artifact.md
+|-- docs/
+|   `-- 2026-04-11--brief-title--claude.md
+|-- research/
+|   `-- 2026-03-20--topic-notes--gpt.md
+|-- creative/
+|   `-- 2026-02-14--story-draft--claude.md
+|-- code/
+|   `-- 2026-01-09--auth-module--claude.py
+`-- inbox/
+    `-- (unsorted items)
+\end{lstlisting}
+
+\subsubsection{Root Files}
+
+Three files live at the library root and are never moved:
+
+\begin{itemize}
+  \item \texttt{MAP.md} --- the master index of all items in the library.
+  \item \texttt{MASTER-PROMPT.md} --- the system prompt pasted at the start
+        of every AI session.
+  \item \texttt{USER-GUIDE.tex} --- this document.
+\end{itemize}
+
+\subsubsection{The projects/ Folder}
+
+Each project is a subfolder with a short, descriptive slug as its name.
+Project slugs use lowercase letters and hyphens only.
+No spaces, no uppercase, no special characters.
+
+Every project folder contains:
+
+\begin{itemize}
+  \item \texttt{THREAD.md} --- the project spine. Described in full in Section 4.
+  \item \texttt{persona.md} --- the persona prompt used for this project.
+  \item One set of three versioned files per checkpoint (artifact, context, instructions).
+\end{itemize}
+
+\subsubsection{The Standalone Subfolders}
+
+Items that are not part of a multi-session project are stored in one of four
+subfolders based on content type:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Folder} & \textbf{Content} \\
+\midrule
+\texttt{docs/} & Written output: reports, briefs, essays, letters, analyses \\
+\texttt{research/} & Research notes, summaries, literature reviews, reference material \\
+\texttt{creative/} & Stories, copy, ideas, conceptual drafts, brainstorm outputs \\
+\texttt{code/} & Scripts, modules, technical specifications, configuration files \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{The inbox/ Folder}
+
+The inbox is a staging area for items that have not yet been classified
+and placed in their correct location. New material is dropped into the inbox
+first without any renaming or reorganisation. Classification happens
+as a separate deliberate step, not at the moment of capture.
+
+\begin{mdframed}[style=warnbox]
+\textbf{Important:} Do not sort or rename files at the moment of capture.
+The inbox exists precisely to prevent hasty classification decisions.
+Sort the inbox during a dedicated maintenance session, not mid-workflow.
+\end{mdframed}
+
+% ---------------------------------------------------------------
+\section{File Conventions}
+
+\subsection{Naming Conventions}
+
+\subsubsection{Project Files}
+
+Project files use a version prefix followed by a type identifier:
+
+\begin{lstlisting}
+v[NN]--[type].[ext]
+\end{lstlisting}
+
+Where:
+\begin{itemize}
+  \item \texttt{[NN]} is a two-digit zero-padded version number:
+        \texttt{v01}, \texttt{v02}\ldots\texttt{v09}, \texttt{v10}, \texttt{v11}
+  \item \texttt{[type]} is one of: \texttt{artifact}, \texttt{context},
+        \texttt{instructions}
+  \item \texttt{[ext]} is the appropriate file extension for the content type
+\end{itemize}
+
+The two-digit padding is mandatory. Operating systems and file managers that
+sort filenames lexicographically will place \texttt{v10} between \texttt{v1}
+and \texttt{v2} if single-digit numbers are used. Two-digit padding ensures
+correct chronological sort order up to version 99.
+
+Three files are produced at each checkpoint. All three carry the same version
+number. Examples for version 3:
+
+\begin{lstlisting}
+v03--artifact.tex
+v03--context.md
+v03--instructions.md
+\end{lstlisting}
+
+\subsubsection{Artifact File Extensions}
+
+The artifact extension matches the content format:
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Extension} & \textbf{Use} \\
+\midrule
+\texttt{.tex} & LaTeX documents \\
+\texttt{.md} & Markdown documents \\
+\texttt{.py} & Python code \\
+\texttt{.js} & JavaScript code \\
+\texttt{.txt} & Plain text with no formatting \\
+\texttt{.html} & HTML documents \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Context and instructions files are always \texttt{.md} regardless of the
+artifact format.
+
+\subsubsection{Standalone Files}
+
+Standalone files (not part of a project) use:
+
+\begin{lstlisting}
+YYYY-MM-DD--short-descriptive-slug--vendor.[ext]
+\end{lstlisting}
+
+Where:
+\begin{itemize}
+  \item \texttt{YYYY-MM-DD} is the ISO 8601 date of creation
+  \item \texttt{short-descriptive-slug} is 2--5 lowercase hyphen-separated words
+  \item \texttt{vendor} is one of: \texttt{claude}, \texttt{gpt},
+        \texttt{gemini}, \texttt{other}
+\end{itemize}
+
+Examples:
+\begin{lstlisting}
+2026-04-11--interest-rate-brief--claude.md
+2026-03-28--landing-page-copy-v3--gpt.md
+2026-02-15--rust-auth-module--claude.py
+2026-01-09--novel-chapter-4--gemini.md
+\end{lstlisting}
+
+Date-prefixed filenames sort chronologically by default in any file manager.
+The vendor suffix provides immediate provenance without opening the file.
+
+\subsection{Frontmatter Schema}
+
+Every standalone file begins with a YAML frontmatter block at the very first
+line of the file. No content precedes it. The block is delimited by triple
+hyphens.
+
+\begin{lstlisting}
+---
+title: Full Human-Readable Title
+date: YYYY-MM-DD
+updated: YYYY-MM-DD
+type: document
+vendor: claude
+model: claude-sonnet-4-6
+tags: [strategy, q2, analysis]
+related: [2026-03-20--prior-brief--claude.md]
+---
+\end{lstlisting}
+
+\subsubsection{Field Definitions}
+
+\begin{longtable}{@{}lllp{5.5cm}@{}}
+\toprule
+\textbf{Field} & \textbf{Type} & \textbf{Required} & \textbf{Description} \\
+\midrule
+\texttt{title} & String & Yes & Full human-readable title of the item \\
+\texttt{date} & ISO date & Yes & Date of original creation \\
+\texttt{updated} & ISO date & Yes & Date of most recent meaningful edit \\
+\texttt{type} & Enum & Yes & Content type (see below) \\
+\texttt{vendor} & Enum & Yes & AI vendor that produced this item \\
+\texttt{model} & String & No & Specific model name and version \\
+\texttt{tags} & List & No & Free list of keyword tags \\
+\texttt{related} & List & No & Filenames of related items \\
+\bottomrule
+\end{longtable}
+
+\subsubsection{Type Values}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{document} & Written output: report, brief, analysis, essay \\
+\texttt{research} & Research notes, summaries, reference material \\
+\texttt{creative} & Creative writing, copy, conceptual work \\
+\texttt{code} & Code, scripts, technical specifications \\
+\texttt{context} & A standalone context bundle for resuming work \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsubsection{Vendor Values}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Value} & \textbf{Meaning} \\
+\midrule
+\texttt{claude} & Anthropic Claude (any version) \\
+\texttt{gpt} & OpenAI ChatGPT (any version) \\
+\texttt{gemini} & Google Gemini (any version) \\
+\texttt{other} & Any other AI model or mixed provenance \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Project checkpoint files (\texttt{v[NN]--artifact}, \texttt{v[NN]--context},
+\texttt{v[NN]--instructions}) do not use frontmatter. Their metadata is stored
+in \texttt{THREAD.md}, which covers the entire project.
+
+% ---------------------------------------------------------------
+\section{Project Structure in Detail}
+
+\subsection{The Versioned Triplet}
+
+Every checkpoint in a project produces exactly three files.
+They are always produced together, always carry the same version number,
+and are always stored in the same project folder.
+
+\begin{center}
+\begin{tabular}{@{}lp{4cm}p{5.5cm}@{}}
+\toprule
+\textbf{File} & \textbf{Cadence} & \textbf{Contents} \\
+\midrule
+\texttt{v[NN]--artifact} & Every checkpoint & The full output in its current state.
+  LaTeX, Markdown, code, or plain text. Never summarised, never truncated. \\
+\addlinespace
+\texttt{v[NN]--context.md} & Every checkpoint & Complete state dump.
+  Everything established, decided, ruled out, and left open.
+  Dense and comprehensive. \\
+\addlinespace
+\texttt{v[NN]--instructions.md} & Every checkpoint & Structured resume prompt.
+  Goal, background, artifact state, decisions, open questions, next task, persona.
+  Functional: a new AI can operate from this file alone. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The three files change at different rates within a project. The artifact changes
+every session. The context changes every session. The instructions file typically
+changes less frequently --- it may be unchanged between versions 2 and 3 if no
+new structural decisions were made. However, a copy is always saved at every
+checkpoint even if unchanged, because storage is inexpensive and a gap in the
+version sequence creates ambiguity.
+
+\subsection{THREAD.md}
+
+\texttt{THREAD.md} is the spine of a project. It is the first file any person
+or AI should read when approaching an existing project. It contains:
+
+\begin{enumerate}
+  \item A description of the project: what it is, what it produces, for whom.
+  \item A reference to the persona used.
+  \item A chronological checkpoint log: one entry per version, explaining what
+        happened, what changed, and what remains open.
+  \item A resume section: which version to use and how to start a new session.
+\end{enumerate}
+
+The checkpoint log is the most important section. Each entry answers:
+
+\begin{itemize}
+  \item What triggered this checkpoint?
+  \item What is the current state of the artifact?
+  \item What has the AI established in its context?
+  \item Did the instructions file change? If so, what shifted?
+  \item What decisions were made during this session?
+  \item What questions remain open?
+\end{itemize}
+
+A person reading \texttt{THREAD.md} top to bottom should be able to understand
+the full arc of thinking across all sessions without opening any version file.
+
+\subsubsection{THREAD.md Template}
+
+\begin{lstlisting}
+# Thread: [Full Project Name]
+> Started: YYYY-MM-DD | Latest checkpoint: v[NN] | Status: [in-progress / complete / paused]
+
+## What this project is
+
+[2-4 sentences. What is being produced? What question is being answered?
+What does the completed artifact look like? Who is it for?]
+
+## Persona
+
+The persona used for this project is defined in `persona.md`.
+[Note any changes to the persona across versions here.]
+
+---
+
+## Checkpoint log
+
+### v01 -- YYYY-MM-DD
+**Triggered by:** [e.g. end of first session, outline complete, context length]
+**Artifact:** [one sentence on what the artifact contains at this point]
+**Context:** [one sentence on what the AI had established]
+**Instructions:** FIRST VERSION -- [one sentence on what the instructions tell a new AI]
+**Key decisions made:**
+- [decision and brief rationale]
+**Still open:**
+- [open question]
+
+---
+
+### v02 -- YYYY-MM-DD
+**Triggered by:** [what caused this checkpoint]
+**Artifact:** [what changed since v01]
+**Context:** [what new ground was covered]
+**Instructions:** UNCHANGED | CHANGED -- [if changed, what shifted]
+**Key decisions made:**
+- [decision]
+**Still open:**
+- [question]
+
+---
+
+## How to resume this project
+
+1. Read this file top to bottom to reorient.
+2. Open `v[NN]--instructions.md` (latest version).
+3. Start a new chat. Paste `MASTER-PROMPT.md` first.
+4. Type: RESUME
+5. Paste the full contents of `v[NN]--instructions.md`.
+6. Optionally paste `v[NN]--artifact.[ext]` for full context.
+\end{lstlisting}
+
+\subsection{persona.md}
+
+The persona file contains the system prompt you use for this project.
+It describes what kind of AI you need: domain expertise, tone, audience,
+what to avoid, and what to treat as given.
+
+The persona is stable across sessions. It changes only if the nature of
+the work fundamentally shifts. A persona written for a legal research
+project should not need to change between sessions one and ten.
+
+\subsubsection{persona.md Template}
+
+\begin{lstlisting}
+# Persona: [Project Name]
+
+You are [role and domain description].
+
+You have deep expertise in [specific subject area].
+
+You write for [audience description].
+
+Your tone is [tone description].
+
+You avoid [list of things to avoid].
+
+You treat the following as established and do not re-litigate them:
+- [established fact or decision]
+- [established fact or decision]
+
+You are rigorous about [specific standards: sources, evidence, logic, etc.].
+
+When uncertain, you say so explicitly rather than proceeding with confidence.
+\end{lstlisting}
+
+% ---------------------------------------------------------------
+\section{MAP.md}
+
+\subsection{Purpose}
+
+\texttt{MAP.md} is the master index of the entire library. It serves three
+functions simultaneously:
+
+\begin{enumerate}
+  \item \textbf{Directory (Yahoo-style):} Browsable categories with titled,
+        described entries. A human can scan the map and navigate to any item.
+  \item \textbf{Search index (Google-style):} Each entry has a one-line
+        summary. An AI can read the entire map and know which file to open
+        without asking.
+  \item \textbf{Wiki (Wikipedia-style):} The Threads section shows how
+        ideas relate and evolved across multiple files and sessions.
+\end{enumerate}
+
+\subsection{MAP.md Structure}
+
+\begin{lstlisting}
+# AI Library -- Master Map
+> Last updated: YYYY-MM-DD | Total items: [N]
+
+[One paragraph: what this library contains, who maintains it, 
+ how to navigate it.]
+
+---
+
+## Recent
+[Table of 10 most recently updated items. Updated after every session.]
+
+| Date | Title | Type | Vendor |
+|------|-------|------|--------|
+| YYYY-MM-DD | [Title](path) | document | claude |
+
+---
+
+## Topics
+
+### [Topic Name]
+- [Title](relative/path/to/file.md) `tag` `tag`
+  YYYY-MM-DD . vendor . type
+  One sentence: what this item is and why it matters.
+
+---
+
+## Projects
+- [Project Name](projects/slug/THREAD.md) `tag`
+  Started YYYY-MM-DD . latest v[NN] . [status] . vendor
+  One sentence on where the project currently stands.
+
+---
+
+## Threads
+[Each Thread entry shows how an idea evolved across files.]
+
+### Thread: [Idea or Project Name]
+One paragraph describing the arc of this thread.
+
+v01 [Title](path) -- YYYY-MM-DD
+  |
+  v  led to
+v02 [Title](path) -- YYYY-MM-DD
+  |
+  v  branched
+v03a [Title](path) -- YYYY-MM-DD
+v03b [Title](path) -- YYYY-MM-DD
+
+---
+
+## Tags Index
+| Tag | Count | Representative Items |
+|-----|-------|----------------------|
+| strategy | 0 | -- |
+
+---
+
+## Vendors
+| Vendor | Model | Items |
+|--------|-------|-------|
+| Claude | claude-sonnet-4-6 | 0 |
+\end{lstlisting}
+
+\subsection{MAP.md Maintenance}
+
+Update \texttt{MAP.md} after every session:
+
+\begin{itemize}
+  \item Add the new or updated item to the correct Topic section.
+  \item Update the Recent table (add the new row at the top, remove the oldest if over 10).
+  \item Update the project entry if the status or latest checkpoint changed.
+  \item Update or extend a Thread entry if new work connects to existing ideas.
+  \item Update the Tags index counts.
+\end{itemize}
+
+Use the \texttt{ADD TO MAP} command in the master prompt to generate correctly
+formatted entries. You supply the title, path, and one-line summary.
+The AI produces the formatted entry.
+
+% ---------------------------------------------------------------
+\section{The Checkpoint Ritual}
+
+\subsection{What It Is}
+
+The checkpoint ritual is the mechanism by which you externalise the state of
+a working session before context degrades or the session ends. It is the
+most operationally critical practice in the entire system.
+
+A checkpoint produces four outputs:
+
+\begin{enumerate}
+  \item The \textbf{artifact} --- the complete current output
+  \item The \textbf{context} --- the complete state of established knowledge
+  \item The \textbf{instructions} --- the complete resume prompt for a future session
+  \item The \textbf{thread entry} --- the log entry for \texttt{THREAD.md}
+\end{enumerate}
+
+The master prompt specifies the exact format for each of these outputs.
+When you type \texttt{CHECKPOINT v[NN]}, the AI produces all four in
+sequence in labelled code blocks ready for extraction.
+
+\subsection{When to Call a Checkpoint}
+
+Call a checkpoint when any of the following conditions are met:
+
+\begin{itemize}
+  \item The conversation has been running for more than 45--60 minutes.
+  \item A significant structural decision has been made that should be preserved.
+  \item The artifact has reached a meaningful milestone (outline complete,
+        section complete, full draft complete).
+  \item You are about to close the session for any reason.
+  \item You sense that the AI's responses are becoming less coherent or
+        are inconsistently referencing earlier decisions. This is a signal
+        that context compression is occurring.
+  \item You are about to change direction significantly and want to preserve
+        the current state before branching.
+\end{itemize}
+
+\begin{mdframed}[style=warnbox]
+\textbf{Important:} Do not wait until context compression has already degraded
+the session significantly before calling a checkpoint. Call it as a precaution
+when you sense it might be needed, not as a rescue operation after quality
+has dropped. The checkpoint is cheap. A degraded context is expensive to recover.
+\end{mdframed}
+
+\subsection{Step-by-Step Checkpoint Procedure}
+
+\begin{enumerate}
+  \item Determine the version number. It is the current highest version
+        number in the project folder plus one. If the project folder is
+        empty, the first checkpoint is \texttt{v01}.
+
+  \item Type in the chat: \texttt{CHECKPOINT v[NN]}
+        where \texttt{[NN]} is the version number you determined.
+
+  \item The AI will produce four labelled code blocks in sequence.
+        Do not interrupt the output. Wait for all four to complete.
+
+  \item Copy the contents of the \textbf{ARTIFACT} block.
+        Open a new file in your text editor.
+        Paste the contents.
+        Save as \texttt{v[NN]--artifact.[ext]} in the project folder.
+
+  \item Copy the contents of the \textbf{CONTEXT} block.
+        Open a new file.
+        Paste the contents.
+        Save as \texttt{v[NN]--context.md} in the project folder.
+
+  \item Copy the contents of the \textbf{INSTRUCTIONS} block.
+        Open a new file.
+        Paste the contents.
+        Save as \texttt{v[NN]--instructions.md} in the project folder.
+
+  \item Copy the contents of the \textbf{THREAD ENTRY} block.
+        Open \texttt{THREAD.md} for this project.
+        Paste the block at the bottom of the Checkpoint Log section.
+        Update the header line to reflect the new latest checkpoint.
+        Save \texttt{THREAD.md}.
+
+  \item Update \texttt{MAP.md}:
+        Update the project's entry to reflect the new checkpoint number.
+        Update the Recent table.
+        Save \texttt{MAP.md}.
+
+  \item The checkpoint is complete.
+        You may continue the session, or close it.
+\end{enumerate}
+
+\subsection{Versioning Philosophy}
+
+Versions in this system are checkpoints, not releases. They do not represent
+finished states. They represent the state of the work at a moment in time,
+preserved for the purpose of resumption and reference.
+
+Do not wait until a section or draft is ``finished'' to call a checkpoint.
+Call it when you have made progress worth preserving, regardless of whether
+the work is complete. An artifact at \texttt{v04} is not four times better
+than \texttt{v01}. It is four saved states, each recoverable.
+
+The \texttt{THREAD.md} log is where you record what each version represents.
+Two versions that are structurally identical except for a single key decision
+are worth differentiating precisely because \texttt{THREAD.md} will explain
+what changed and why.
+
+% ---------------------------------------------------------------
+\section{The Master Prompt}
+
+\subsection{Purpose}
+
+The master prompt is the control mechanism for the entire Layer 1 system.
+Pasted at the start of any AI session with any model, it establishes:
+
+\begin{itemize}
+  \item The AI's operational role
+  \item The complete library structure
+  \item All naming and formatting conventions
+  \item The checkpoint ritual and output formats
+  \item All navigation commands
+  \item All behavioural constraints
+\end{itemize}
+
+The AI operates within your system from the first message of the session.
+You do not explain the system. You do not repeat instructions. You simply
+paste the prompt and begin.
+
+\subsection{Where to Store It}
+
+\texttt{MASTER-PROMPT.md} lives in the root of \texttt{AI-Library/}.
+It is the single file you copy from at the start of every session.
+
+\texttt{MASTER-PROMPT.tex} is the compiled LaTeX version of the same content,
+stored for archival and reference.
+
+Do not modify the master prompt mid-project. If you need to change it,
+increment a version number in the filename
+(\texttt{MASTER-PROMPT-v2.md}) and note the change date.
+
+\subsection{Command Reference}
+
+\begin{longtable}{@{}lp{9cm}@{}}
+\toprule
+\textbf{Command} & \textbf{Effect} \\
+\midrule
+\texttt{CHECKPOINT v[NN]} &
+Produces all four checkpoint blocks in sequence: artifact, context,
+instructions, and thread entry. Each in its own labelled code block. \\
+\addlinespace
+\texttt{RESUME} &
+Reads the instructions file pasted immediately after.
+Reconstructs the project state. Confirms understanding in one paragraph.
+Asks one clarifying question only if necessary. Waits for direction. \\
+\addlinespace
+\texttt{SHOW MAP} &
+Reads any MAP.md content pasted. Produces a structured summary of
+library state: item counts, active topics, in-progress projects,
+most recent updates, and observed gaps or inconsistencies. \\
+\addlinespace
+\texttt{SHOW THREAD} &
+Reads any THREAD.md content pasted. Narrates the intellectual arc
+of the project in plain language. Identifies turning points,
+key decisions, and unresolved questions. Produces a coherent paragraph,
+not a list. \\
+\addlinespace
+\texttt{NEW PROJECT [name]} &
+Produces a complete blank THREAD.md for the named project and a
+structured prompt to help the user write the persona. \\
+\addlinespace
+\texttt{ADD TO MAP [title] [path] [summary]} &
+Produces a correctly formatted MAP.md entry and a Recent table row. \\
+\bottomrule
+\end{longtable}
+
+% ---------------------------------------------------------------
+\section{Workflow Walkthroughs}
+
+\subsection{Starting a Brand New Project}
+
+\begin{enumerate}
+  \item Create the project folder:
+        \texttt{AI-Library/projects/[project-slug]/}
+
+  \item Open a new AI chat. Paste \texttt{MASTER-PROMPT.md}.
+
+  \item Type: \texttt{NEW PROJECT [your project name]}
+
+  \item The AI produces a blank \texttt{THREAD.md} and a persona prompt.
+        Copy and save \texttt{THREAD.md} to the project folder.
+
+  \item Answer the persona prompt questions. The AI produces \texttt{persona.md}.
+        Save it to the project folder.
+
+  \item Begin the working session. Type your opening prompt.
+
+  \item Work until a checkpoint is warranted.
+
+  \item Run the checkpoint ritual. Save the three versioned files.
+        Update \texttt{THREAD.md}. Update \texttt{MAP.md}.
+\end{enumerate}
+
+\subsection{Resuming an Existing Project}
+
+\begin{enumerate}
+  \item Open \texttt{THREAD.md} for the project. Read the checkpoint log
+        to reorient. Note the latest version number and the open questions.
+
+  \item Open a new AI chat. Paste \texttt{MASTER-PROMPT.md}.
+
+  \item Type: \texttt{RESUME}
+
+  \item Paste the full contents of \texttt{v[NN]--instructions.md}
+        (the latest version).
+
+  \item Optionally, after the instructions, type:
+        ``Here is the current artifact:''
+        and paste the full contents of \texttt{v[NN]--artifact.[ext]}.
+
+  \item The AI confirms its understanding and waits.
+
+  \item Direct the work. Continue until the next checkpoint.
+\end{enumerate}
+
+\subsection{Organising Existing Material}
+
+If you have existing AI outputs, chat exports, LaTeX drafts, and instruction
+sets that predate this system:
+
+\begin{enumerate}
+  \item Drop all existing files into \texttt{AI-Library/inbox/}
+        without renaming them.
+
+  \item Open a new AI chat. Paste \texttt{MASTER-PROMPT.md}.
+
+  \item For each file in the inbox, paste its contents and type:
+        ``Help me create the correct frontmatter and filename for this item.''
+
+  \item The AI produces the frontmatter block and the correct filename.
+
+  \item Save the file with the correct name to the correct subfolder.
+
+  \item For existing multi-session projects, create a project folder,
+        identify the version ordering of your existing artifacts, rename them
+        using the \texttt{v[NN]--} convention, and write a \texttt{THREAD.md}
+        that reconstructs the arc as best you can from what exists.
+
+  \item Work through the inbox systematically. Do not rush.
+        A partially sorted library is still usable. An unsorted library is not.
+\end{enumerate}
+
+\subsection{Sharing a Project}
+
+\begin{enumerate}
+  \item Navigate to \texttt{AI-Library/projects/[project-slug]/}.
+
+  \item Compress the folder to a ZIP archive.
+
+  \item Send the ZIP to the recipient.
+
+  \item Tell the recipient: ``Unzip this folder. Read \texttt{THREAD.md} first.
+        To resume the work with any AI, paste \texttt{MASTER-PROMPT.md} from
+        the AI-Library root and then type RESUME followed by the contents of
+        the latest instructions file.''
+
+  \item The recipient needs no account, no application, and no onboarding
+        beyond those two instructions.
+\end{enumerate}
+
+If the recipient does not have a \texttt{MASTER-PROMPT.md} file, include a
+copy of it in the ZIP alongside the project folder.
+
+% ---------------------------------------------------------------
+\section{Storage and Durability}
+
+\subsection{Where to Store the Library}
+
+The AI Library folder is storage-agnostic. It works identically on:
+
+\begin{itemize}
+  \item A local folder on your Mac with no sync
+  \item iCloud Drive
+  \item Google Drive
+  \item Dropbox
+  \item Any other cloud storage service
+  \item An external hard drive
+  \item A USB drive
+\end{itemize}
+
+The recommendation is to use the cloud storage service you already use
+daily for other files. Consistency of location reduces the chance of
+forgetting to save new files in the right place.
+
+\subsection{Backup Strategy}
+
+No single storage location is sufficient for a permanent library.
+The following backup strategy is recommended:
+
+\begin{itemize}
+  \item \textbf{Primary:} A cloud-synced folder (iCloud, Google Drive,
+        or Dropbox). Provides automatic versioning and cross-device access.
+
+  \item \textbf{Secondary:} A quarterly copy to an external hard drive.
+        Provides protection against account loss, cloud service failure,
+        and accidental deletion.
+
+  \item \textbf{Optional:} A git repository initialised in the
+        \texttt{AI-Library/} folder. Provides full version history of
+        every file with commit messages. Run \texttt{git init} once and
+        \texttt{git commit} after each session.
+\end{itemize}
+
+\begin{mdframed}[style=notebox]
+\textbf{On git:} Initialising a git repository in \texttt{AI-Library/} costs
+nothing and requires no remote hosting. Even a local-only git history gives
+you the ability to recover any version of any file at any point in time.
+This is distinct from the version numbering in the checkpoint system,
+which tracks intellectual progress. Git tracks every save, including
+intermediate states.
+\end{mdframed}
+
+\subsection{What Survives and What Does Not}
+
+\begin{center}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Scenario} & \textbf{Library survives} & \textbf{What you lose} \\
+\midrule
+Cloud provider shuts down & Yes (if secondary backup exists) & Nothing \\
+Hard drive failure & Yes (if cloud sync active) & Nothing \\
+Account suspension & Yes (if local copy exists) & Nothing \\
+AI vendor shuts down & Yes & The live session only \\
+You switch AI vendors & Yes & Nothing \\
+Operating system changes & Yes & Nothing \\
+Format becomes obsolete & Yes (plain text never does) & Nothing \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------
+\section{Troubleshooting and Edge Cases}
+
+\subsection{The AI Does Not Follow the Checkpoint Format}
+
+Different AI models comply with structured output instructions at different
+levels of reliability. If the checkpoint output is malformed or incomplete:
+
+\begin{enumerate}
+  \item After the malformed output, type: ``Redo the [block name] block.
+        Use the exact format specified in the instructions. Output only
+        that block in a code block labelled [LABEL].''
+
+  \item If the model consistently fails to comply, simplify by asking for
+        each block separately: ``Print only the ARTIFACT block now.''
+        Then: ``Print only the CONTEXT block now.'' And so on.
+
+  \item If using a model that does not support structured output well,
+        copy the output as produced and reformat it yourself. The content
+        matters more than the format. The format can be corrected at save time.
+\end{enumerate}
+
+\subsection{You Missed a Checkpoint and Context Has Degraded}
+
+If a session ran too long without a checkpoint and the model is producing
+inconsistent or low-quality outputs:
+
+\begin{enumerate}
+  \item Do not call a checkpoint from the degraded session.
+        The context and instructions produced from a degraded session
+        will themselves be degraded.
+
+  \item Close the session.
+
+  \item Open the latest instructions file from the previous checkpoint.
+
+  \item Start a new session. Paste the master prompt. Resume from the
+        last good checkpoint.
+
+  \item Accept the loss of work done after the last checkpoint.
+        This is the cost of not checkpointing early enough.
+        It is recoverable. Future sessions will checkpoint earlier.
+\end{enumerate}
+
+\subsection{You Have Multiple Conflicting Versions of the Same File}
+
+If you saved multiple versions of an artifact file at the same version
+number (e.g. two files both named \texttt{v03--artifact.tex}):
+
+\begin{enumerate}
+  \item Do not delete either file.
+
+  \item Rename one: \texttt{v03a--artifact.tex} and \texttt{v03b--artifact.tex}.
+
+  \item Open \texttt{THREAD.md} and add a note to the v03 checkpoint entry
+        explaining that a conflict occurred and which version (a or b) was
+        used as the basis for subsequent work.
+
+  \item Continue from the version you consider more current or correct.
+\end{enumerate}
+
+\subsection{The instructions.md Did Not Meaningfully Change}
+
+It is common for the instructions file to remain largely unchanged across
+two or three consecutive checkpoints, particularly in the middle of a long
+project where the goal and structure are stable.
+
+In this case, still save a copy of the instructions at the new version number.
+In the \texttt{THREAD.md} entry, write: \textbf{Instructions: UNCHANGED}.
+Do not skip saving the copy. A missing version in the sequence creates ambiguity
+about whether the instructions were stable or simply not saved.
+
+\subsection{Sorting a Large Inbox}
+
+If the inbox contains a large number of unsorted files, sort them in batches
+rather than all at once. Work through them by project first: identify all files
+that belong to the same project, move and rename them together, create the
+project folder and \texttt{THREAD.md}, and then move to the next project.
+
+Leave standalone files for last. Standalone files require only a frontmatter
+block and a correct filename. Project files require the more complex work of
+establishing version ordering and writing a retrospective \texttt{THREAD.md}.
+
+% ---------------------------------------------------------------
+\section{Quick Reference}
+
+\subsection{File Naming Cheat Sheet}
+
+\begin{lstlisting}
+Project files:
+  v01--artifact.tex
+  v01--context.md
+  v01--instructions.md
+
+Standalone files:
+  YYYY-MM-DD--slug--vendor.ext
+  2026-04-11--analysis-brief--claude.md
+
+Root files (never move these):
+  MAP.md
+  MASTER-PROMPT.md
+  USER-GUIDE.tex
+
+Per-project files (never move these out of the project folder):
+  THREAD.md
+  persona.md
+\end{lstlisting}
+
+\subsection{Session Start Checklist}
+
+\begin{itemize}
+  \item[$\square$] Open new chat
+  \item[$\square$] Paste \texttt{MASTER-PROMPT.md}
+  \item[$\square$] Type \texttt{RESUME} and paste latest \texttt{v[NN]--instructions.md}
+        (existing project) OR type opening prompt (new topic)
+  \item[$\square$] Optionally paste latest artifact for full context
+\end{itemize}
+
+\subsection{Checkpoint Checklist}
+
+\begin{itemize}
+  \item[$\square$] Determine version number (current max + 1)
+  \item[$\square$] Type \texttt{CHECKPOINT v[NN]}
+  \item[$\square$] Save ARTIFACT block as \texttt{v[NN]--artifact.[ext]}
+  \item[$\square$] Save CONTEXT block as \texttt{v[NN]--context.md}
+  \item[$\square$] Save INSTRUCTIONS block as \texttt{v[NN]--instructions.md}
+  \item[$\square$] Paste THREAD ENTRY block into \texttt{THREAD.md}
+  \item[$\square$] Update \texttt{THREAD.md} header (latest checkpoint: v[NN])
+  \item[$\square$] Update \texttt{MAP.md} (project entry and Recent table)
+\end{itemize}
+
+\subsection{Command Quick Reference}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Type this} & \textbf{To do this} \\
+\midrule
+\texttt{CHECKPOINT v[NN]} & Save full state (all four blocks) \\
+\texttt{RESUME} + paste instructions & Pick up an existing project \\
+\texttt{SHOW MAP} + paste MAP.md & Get library overview \\
+\texttt{SHOW THREAD} + paste THREAD.md & Get project arc narrative \\
+\texttt{NEW PROJECT [name]} & Start a new project \\
+\texttt{ADD TO MAP [title] [path] [summary]} & Get a MAP.md entry \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{16pt}
+\hrule height 0.4pt
+\vspace{12pt}
+
+\begin{center}
+{\small\texttt{AI-Library / USER-GUIDE.tex} \quad Version 1.0 \quad \today}\\[4pt]
+{\small Plain text. No vendor. No application required. No expiry.}
+\end{center}
+
+\end{document}

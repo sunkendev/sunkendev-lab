@@ -1,0 +1,212 @@
+CONTEXT v19
+-----------
+PROJECT: AI Document Library System — a five-layer vendor-agnostic plain-text library for managing AI-generated work.
+DECISIONS:
+- Plain Markdown as universal format
+- YAML frontmatter as metadata standard
+- Two-digit version numbers (v01...v99) for correct lexicographic sort
+- Three-file checkpoint triplet: artifact, context, instructions
+- THREAD.md as project spine, one per project folder
+- MAP.md at library root as single traversal index
+- Master prompt as sole control mechanism
+- Layer 1 mandatory; all other layers optional and additive
+- Library folder is storage-agnostic
+- LaTeX for formal reference documents
+- docs/ and code/ live inside each project folder, not at root
+- inbox/ is the only non-project folder at root besides MAP.md and reference docs
+- research/ and creative/ folders eliminated
+- Frontmatter type field values: document | code | context
+- Context file schema: PROJECT, DECISIONS, RULED OUT, OPEN, STATE — in that order
+- Instructions file schema: PROJECT, GOAL, BACKGROUND, ARTIFACT STATE, KEY DECISIONS, OPEN QUESTIONS, EXPLICITLY RULED OUT, NEXT TASK, PERSONA, STYLE AND CONSTRAINTS
+- DECISIONS and RULED OUT are append-only in both context and instructions files
+- ORIGIN removed from context schema — episodic history belongs in THREAD.md
+- Master prompt checkpoint ritual updated to enforce all three block schemas
+- v01 and v02 files treated as pre-schema legacy
+- Artifact wrapper schema: LABEL, VERSION MATCH, EXTENSION MATCH, NON-EMPTY BODY
+- Artifact type schemas defined per type at time of first use
+- THREAD.md schema: TITLE, STARTED, DESCRIPTION, PERSONA, CHECKPOINT LOG — ascending order
+- THREAD.md status values: active | paused | complete | archived
+- Latest checkpoint derived from last log entry, not stored in META
+- MAP.md schema: TITLE, ROOT, PROJECTS — no META, no duplicate entries
+- persona.md schema: ROLE, DOMAIN, BEHAVIOUR, EXAMPLES — all mandatory
+- persona.md has no frontmatter — it is a project file not a standalone document
+- VOICE and CONSTRAINTS merged into BEHAVIOUR in persona.md schema
+- EXAMPLES mandatory in persona.md — specific detailed personas outperform generic ones
+- Git as foundation for Layer 3 — local git first, remote later
+- Pre-commit hook as primary validation mechanism
+- vNN prefix retained for human readability alongside git history
+- Checkpoint = major milestone commit; routine sessions = git commits without full triplet
+- Git initialised — first commit 5a20741 on main branch
+- Library stored in iCloud at ~/AI-Library (iCloud)
+- RESUME procedure requires four files in order: persona.md, THREAD.md, context, instructions
+- .git folder and .DS_Store excluded from MAP.md
+- Post-checkpoint instructions embedded in MASTER-PROMPT.md
+- Pre-commit hook written, installed, and tested — operational at commit 515f792
+- Triplet lockstep enforced: any vNN file staged requires all three at same version
+- Version mismatch within same project folder blocks commit
+- Block on structural violations; warn on advisory checks
+- MAP.md integrity check: warns if referenced path does not exist on disk
+- THREAD.md order check: warns if checkpoint headers are out of ascending order
+- Exclusions centralised in EXCLUDED set in pre-commit script
+- MASTER-PROMPT.md, ARCHITECTURE.tex, USER-GUIDE.tex, THREAD.md, persona.md excluded from MAP.md warning
+- Pre-commit script self-check: not required — .py files correctly ignored by hook
+- code/ folder at library root for deployed operational scripts
+- projects/ai-library-system/code/ is source and development environment for all library scripts
+- Flow is project → library: develop and version in project, deploy to code/ at library root
+- projects/ai-library-system/ is the control panel for the library system itself
+- .git/hooks/pre-commit wired from code/pre-commit.py not from project folder
+- Layer 2 implemented by placing full MASTER-PROMPT.md and persona.md in platform workspace system prompt
+- System prompt position gives standing instructions structural priority over pasted content
+- Layer 2 session start still requires all four RESUME files pasted — system prompt is background, not active context
+- Layer 2 is consumer app tier only — API cost prohibitive for this use case
+- NOTE format added to THREAD.md schema for inter-checkpoint working notes
+- NOTE entries: NOTE YYYY-MM-DD, Topic line, prose — no triplet, no version number, no validation
+- After appending a NOTE, THREAD.md must be committed immediately before proceeding
+- layer-1-foundation.md rewritten and renamed to 2026-04-11--layer-1-foundation--claude.md
+- NOTE format block added to THREAD.md section of 2026-04-11--layer-1-foundation--claude.md
+- 2026-04-11--layer-2-session--claude.md written and committed
+- Layer 2 platform experiment run — Claude Project confirmed working as designed
+- Claude Code five-layer evaluation completed and report saved
+- .claude/ added to .gitignore — Claude Code worktree excluded from git and libmap
+- libmap alias updated to exclude .claude/ path
+- NOTE entries appended via add_note_thread.py — manual THREAD.md editing replaced
+- add_note_thread.py commits THREAD.md immediately — immediate-commit rule enforced automatically
+- checkpoint.py designed, built, tested, and deployed
+- checkpoint.py uses sentinel walk (MAP.md) for library root discovery
+- checkpoint.py parses tilde fence as canonical for ARTIFACT block; four-backtick and three-backtick retained as legacy fallbacks
+- checkpoint.py extracts MAP.md summaries from THREAD ENTRY **Artifact:**, **Context:**, **Instructions:** fields
+- checkpoint.py does not execute git — prints commands for user to run
+- checkpoint.py source: projects/ai-library-system/code/checkpoint.py
+- checkpoint.py deployment: code/checkpoint.py at library root
+- ARTIFACT outer fence changed from four-backtick to tilde — tilde and backtick fences never collide in CommonMark
+- checkpoint.py dry-run is default; --write executes
+- checkpoint.py input defaults to temp/v[NN]-checkpoint.txt inside library root
+- checkpoint.py input-file argument is now optional
+- Version guard added to checkpoint ritual — THREAD.md must be present before checkpoint proceeds
+- temp/ folder at library root holds checkpoint input files — one per version
+- temp/ excluded from git via .gitignore
+- temp/ excluded from pre-commit hook via EXCLUDED set
+- Saving checkpoint input file outside library folder ruled out — temp/ is the correct location
+- Checkpoint file delivered as downloadable .txt saved to temp/ by AI — no manual save step
+- Artifact, context, and instructions files all begin with label line and separator — self-describing by convention
+- Label and separator consumed by parse_blocks() are reconstructed by checkpoint.py on write for all three file types
+- Separator width equals label width — consistent across all files on disk
+- Layer 2 workspace system prompt update is a mandatory step whenever the artifact is MASTER-PROMPT.md
+- Claude Code evaluation prompt pattern established as reusable technique for external code review
+- MASTER-PROMPT.md content must never contain a line starting with ~~~ — collides with tilde fence parser
+- Library structure diagram in MASTER-PROMPT.md updated to include temp/ folder
+- MASTER-PROMPT.md CONTEXT schema updated — append-only enforcement: copy all previous lines verbatim then append
+- checkpoint.py integrity validation runs after every --write: label lines, separators, STATE presence, append-only superset check, size ratio check
+- checkpoint.py writes SHA-256 manifest to temp/v[NN]-[slug]-manifest.json after every --write
+- Manifest covers: artifact, context, instructions, THREAD.md, MAP.md, persona.md
+- SHA-256 tamper detection checks all six manifest files at next checkpoint
+- THREAD.md included in manifest — append-only, tamper detection enforced
+- MAP.md included in manifest — tamper detection catches manual edits between checkpoints
+- persona.md included in manifest — stable file, tamper detection enforced
+- Integrity validation warns but does not block — consistent with pre-commit hook philosophy
+- DECISIONS and RULED OUT drop detection: new context must be superset of previous version
+- Artifact and context size ratio thresholds: artifact >= 80% of previous, context >= 90% of previous
+- MASTER-PROMPT.md excluded from manifest — legitimate hash changes
+- v14 context repaired — dropped decisions from v10 restored, two missing decisions added
+- Library consistency audit run via Claude Code — v14 triplet and v11 STATE identified and repaired
+- Claude Code audit prompt pattern saved as reusable technique
+- iCloud library frozen at v15 as permanent baseline — no new commits to iCloud repo
+- New library forked to ~/Claude/Projects/AI-Library/ — local SSD, independent git repo, first commit 8e9ac4a
+- Fork implemented as new folder with new git repo — not a git branch, not a remote of the iCloud repo
+- ~/Claude/Projects/ chosen as library parent — outside macOS privacy-protected folders, no terminal permission issues
+- Cowork designated as Layer 2+3 orchestrator — replaces manual terminal operations for library management
+- WORM storage strategy: local SSD primary, iCloud passive rsync mirror, GitHub WORM with branch protection, USB-C 2TB SSD as future tertiary
+- Cowork project created: AI-Library pointing to ~/Projects/AI-Library
+- Cowork project instructions = MASTER-PROMPT.md + persona.md — Layer 2 convention maintained
+- git is folder-bound — each library has its own independent repo, no cross-repo coupling
+- macOS protected folders (Documents, Desktop, Downloads) require explicit terminal permission grants — avoided as library home
+- ai-library-ops Cowork orchestration skill designed, built, and installed
+- Skill source at projects/ai-library-system/code/ai-library-ops/SKILL.md — follows project → library convention
+- Skill packaged as temp/ai-library-ops.skill and installed in Cowork
+- Skill handles three operations: CHECKPOINT (blocks → save → dry-run → write → git), NOTE (add_note_thread.py), COMMIT (routine git)
+- Library root discovery in skill: Path('.').rglob('MAP.md') from session working directory, then cd into result
+- All skill commands require cd into library root — scripts use Path.cwd() for sentinel discovery
+- git add and git commit now executed by ai-library-ops skill in Cowork sessions — checkpoint.py continues to print commands for non-Cowork use
+- SKILL.md added to pre-commit EXCLUDED set — skill framework files use their own frontmatter schema
+- .git/hooks/pre-commit replaced with bash wrapper delegating to code/pre-commit.py — eliminates drift, no manual cp step required
+- add_note_thread.py clears stale index.lock and HEAD.lock before git operations
+- Cowork sandbox cannot delete files in .git/ without explicit permission — allow_cowork_file_delete tool required before each git operation
+- allow_cowork_file_delete grants blanket delete permission for AI-Library folder for the session duration — one call per session sufficient
+- Library root discovery in skill changed from Path('.').rglob() to find /sessions -maxdepth 7 — CWD-independent, unaffected by prior cd commands
+- write_snapshot function removed from pre-commit.py — violated self-containment principle by writing to ~/Desktop
+- Self-containment principle established: no library script writes to paths outside ~/Claude/Projects/AI-Library/
+- Git identity configured in .git/config — persists across Cowork sessions, no re-configuration needed
+- HEAD.lock persists after every sandbox git commit because sandbox cannot unlink .git/ files by default — allow_cowork_file_delete followed by rm -f resolves this
+- Layer 2 project instructions update requires manual paste into Cowork project settings — no automation path currently available
+- ai-library-ops skill v3 built with RESUME (Operation 4) and NEW PROJECT (Operation 5) added
+- RESUME reads four project files from disk in order — no copy-paste required in Cowork sessions
+- RESUME discovers project slugs via ls projects/, asks which to load, finds highest vNN context and instructions files automatically
+- NEW PROJECT guided persona creation: three questions one at a time, each with guidance and format-example options
+- NEW PROJECT persona options are format models only — user types real answer via Other; options exist to show expected register
+- NEW PROJECT writes no files until persona is confirmed by user
+- MAP.md project entry format: ## projects/[slug]/ section header with bullet items, inserted before ## inbox/ line
+- legal-research test project created and committed — NEW PROJECT and RESUME flows verified end to end
+- RESUME command in MASTER-PROMPT.md navigation section is superseded by skill automation in Cowork sessions — copy-paste procedure retained for non-Cowork use
+RULED OUT:
+- Any proprietary file format
+- Any platform as source of truth
+- Recommending specific cloud storage
+- Implementing Layers 2-5 before Layer 1 is proven
+- research/ and creative/ as top-level folders
+- PHILOSOPHY section in context files
+- Duplicating origin or file lists across multiple files
+- META section in THREAD.md and MAP.md — derived from content or git
+- Optional sections in schemas — either mandatory or absent
+- VOICE and CONSTRAINTS as separate sections in persona.md
+- Newest-first ordering in THREAD.md
+- Resuming from instructions file alone — insufficient context
+- Blocking on MAP.md missing entry — warn only, legitimate during active sessions
+- Blocking on context/instructions section headers — warn only
+- Pre-commit hook checking itself — .py files have no frontmatter or vNN requirement
+- Warn-only for triplet and version mismatch — both are blocking errors
+- Remote git for now — iCloud provides sufficient off-site redundancy
+- API tier for Layers 1 and 2 — consumer apps are correct tier, cost prohibitive at API
+- Updating ARCHITECTURE.tex and USER-GUIDE.tex before system is scripted live
+- Cloud-native platforms for personal library use
+- Layer 2 session start simplification — all four RESUME files still required
+- scripts/ as folder name — renamed to code/ for consistency
+- Clipboard as default input mode for checkpoint.py — file path is more robust
+- checkpoint.py steps 10–11 as originally designed — reference eliminated schema elements
+- checkpoint.py artifact extension as CLI argument — always .md for this system
+- checkpoint.py executing git commands — prints them for user to run
+- Cloud-native execution of checkpoint.py at this stage — Layer 5 concern
+- Four-backtick outer fence for ARTIFACT block — replaced by tilde fence
+- Saving checkpoint input file outside library folder — temp/ replaces this
+- Printing CHECKPOINT FILE block in chat — replaced by downloadable file saved to temp/
+- Previous ruling against artifact label line reversed — artifact files are self-describing by same convention
+- Manual THREAD.md editing for NOTE entries — use add_note_thread.py instead
+- Blocking integrity validation — warn only, write proceeds
+- MASTER-PROMPT.md in SHA-256 manifest — changes legitimately at every MASTER-PROMPT checkpoint, would generate false tamper warnings
+- ~/Documents/ as library location — macOS privacy restrictions block terminal access without explicit permission grant
+- Folder name with spaces (e.g. "AI Library") — requires shell quoting, avoided in favour of hyphen convention
+- Git branch as fork mechanism — fork is independent, not intended for merging back
+- iCloud Drive as git working directory — sync conflicts with .git internals
+- Manual terminal operations for CHECKPOINT, NOTE, and COMMIT in Cowork sessions — ai-library-ops skill handles all three
+- Writing to paths outside ~/Claude/Projects/AI-Library/ from any library script — self-containment principle
+- Path('.').rglob() for library discovery in skill context — CWD-dependent, replaced by find /sessions
+- ### Heading / Path: / Summary: block format for MAP.md project entries — doesn't match actual file convention; use ## projects/[slug]/ section with bullet items
+OPEN:
+- ARCHITECTURE.tex discrepancies not yet corrected
+- USER-GUIDE.tex not yet rewritten
+- related: fields use bare filenames — pre-commit hook warning not yet added
+- Lightweight metadata convention for project triplet files not yet defined
+- MAP.md machine-readable block not yet added
+- .mcp-config.json example in ARCHITECTURE.tex lists eliminated folders
+- checkpoint.py extension handling if non-.md artifact ever needed
+- Artifact type schema for MASTER-PROMPT.md (.md prompt type) not yet formally written
+- Layer 4 embedding model and vector store not yet chosen
+- Claude Code execution layer not yet implemented
+- iCloud passive backup (rsync) not yet added to checkpoint.py or workflow
+- GitHub remote not yet set up
+- USB-C 2TB SSD backup not yet configured
+STATE:
+- New library live at ~/Claude/Projects/AI-Library/, main branch, commit 9a7d652
+- ai-library-ops skill v3 source committed; temp/ai-library-ops.skill needs reinstall in Cowork (MAP.md format fix)
+- MASTER-PROMPT.md v19: unchanged from v18 — version incremented for triplet sync
+- legal-research test project live in library — NEW PROJECT and RESUME flows verified end to end
+- Next priority: install skill v3 from temp/, then GitHub remote setup

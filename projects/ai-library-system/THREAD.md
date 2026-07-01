@@ -925,3 +925,17 @@ THREAD ENTRY v36
 - SKILL.md v11 documents the verbatim deploy
 **Still open:**
 - flow-vs-ai code/ disposition; eval/quality gate before a deploy; the longer-standing v34-era items
+
+THREAD ENTRY v37
+### v37 — 2026-07-01
+**Triggered by:** First checkpoint in the new sunkendev-lab public-template repo, after bootstrapping it from the clean template zip per BOOTSTRAP.md.
+**Artifact:** MASTER-PROMPT.md unchanged — NO CHANGE, relabelled from v36.
+**Context:** AI knows the template's contents (ai-library-system only; example projects removed; PII masked), the import mechanics (150-file fresh-history root commit 23eb331, one-time --no-verify per the v28 precedent), and the post-import verification (53/53 tests, clean PII greps, hook active via core.hooksPath).
+**Instructions:** Changed — NEXT TASK is to verify main was established by this checkpoint's sync, then pick a v34-era OPEN item.
+**Key decisions made:**
+- Only ai-library-system ships in the public template line; fresh git history (audit trail lives in the files)
+- One-time --no-verify for the bulk import; hook applies normally from here on
+- flow-vs-ai / kurgan-rostok OPEN items resolved by removal; inbox/.gitkeep registered in MAP.md
+**Still open:**
+- Verify main established by this checkpoint's sync; MAP.md's gitignored logs/git-sync.log reference
+- The longer-standing v34-era items (related: warning, MAP machine-readable block, artifact-type schema, DELTA, backups, write protection, log fold, Layer 4/5)

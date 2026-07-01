@@ -121,6 +121,9 @@
 - [v36--artifact.md](projects/ai-library-system/v36--artifact.md) — MASTER-PROMPT.md v36 — ritual save-step 3 reworded from 'label-stripped body' to 'artifact verbatim, label kept'; the live file now opens with 'ARTIFACT v36'.
 - [v36--context.md](projects/ai-library-system/v36--context.md) — AI knows the deploy/guard are verbatim (strip helper removed), why the label is load-bearing, and that staleness — the real prior fault — is handled by auto-deploy + the guard rather than by stripping.
 - [v36--instructions.md](projects/ai-library-system/v36--instructions.md) — Changed — NEXT TASK still points to the flow-vs-ai disposition or another v34-era OPEN item.
+- [v37--artifact.md](projects/ai-library-system/v37--artifact.md) — MASTER-PROMPT.md unchanged — NO CHANGE, relabelled from v36.
+- [v37--context.md](projects/ai-library-system/v37--context.md) — AI knows the template's contents (ai-library-system only; example projects removed; PII masked), the import mechanics (150-file fresh-history root commit 23eb331, one-time --no-verify per the v28 precedent), and the post-import verification (53/53 tests, clean PII greps, hook active via core.hooksPath).
+- [v37--instructions.md](projects/ai-library-system/v37--instructions.md) — Changed — NEXT TASK is to verify main was established by this checkpoint's sync, then pick a v34-era OPEN item.
 
 ## projects/ai-library-system/code/ai-library-ops/
 
@@ -170,3 +173,5 @@
 - [SKILL.md](.claude/skills/ai-library-ops/SKILL.md) — Cloud-autoload copy of the ai-library-ops skill; loaded automatically by Claude Code on the web; source in projects/ai-library-system/code/ai-library-ops/
 
 ## inbox/
+
+- [.gitkeep](inbox/.gitkeep) — Placeholder keeping the empty inbox/ folder in git; not a document

@@ -124,6 +124,9 @@
 - [v37--artifact.md](projects/ai-library-system/v37--artifact.md) — MASTER-PROMPT.md unchanged — NO CHANGE, relabelled from v36.
 - [v37--context.md](projects/ai-library-system/v37--context.md) — AI knows the template's contents (ai-library-system only; example projects removed; PII masked), the import mechanics (150-file fresh-history root commit 23eb331, one-time --no-verify per the v28 precedent), and the post-import verification (53/53 tests, clean PII greps, hook active via core.hooksPath).
 - [v37--instructions.md](projects/ai-library-system/v37--instructions.md) — Changed — NEXT TASK is to verify main was established by this checkpoint's sync, then pick a v34-era OPEN item.
+- [v38--artifact.md](projects/ai-library-system/v38--artifact.md) — MASTER-PROMPT.md v38 — structure diagram now lists ARCHITECTURE.md and USER-GUIDE.md; body otherwise unchanged from v37.
+- [v38--context.md](projects/ai-library-system/v38--context.md) — Folds in the two Layer 4 NOTEs (purpose; external read-only architecture), the retirement of the embeddings retrieval design, the v2.1 rewrite, the Markdown conversion, the EXCLUDED set changes (docs out with frontmatter, README.md in), and the corrected manual-deploy claims.
+- [v38--instructions.md](projects/ai-library-system/v38--instructions.md) — Changed — BACKGROUND, ARTIFACT STATE, and NEXT TASK updated for the Layer 4 redefinition and the doc conversion; NEXT TASK points at the Layer 4 output-location/evaluation questions or a v34-era OPEN item.
 
 ## projects/ai-library-system/code/ai-library-ops/
 

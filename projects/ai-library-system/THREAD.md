@@ -959,3 +959,18 @@ Rationale: a reasoning-synthesis engine is a software project; housing it inside
 Consequence: Layer 4 stops being a layer inside the library folder (ARCHITECTURE.tex currently shows .index/ and code/search.py inside AI-Library/) and becomes the first system outside it, with the library as its data source. This compounds the pending ARCHITECTURE.tex Layer 4 rewrite.
 
 Open design question, deliberately unanswered: where Layer 4's output (the synthesized thinking-patterns document / meta-persona) lives. Either it stays in the Layer 4 repo (library unaware Layer 4 exists — observer model), or it returns to the library through the front door as a normal versioned project artifact reachable by RESUME (contributor model, same ceremony as any approved change). First decision the separate repo will force.
+
+THREAD ENTRY v38
+### v38 — 2026-07-02
+**Triggered by:** Layer 4 redefined — cross-project reasoning-pattern synthesis in an external read-only repo — then ARCHITECTURE rewritten to v2.1 and both reference docs converted from LaTeX to Markdown.
+**Artifact:** MASTER-PROMPT.md v38 — structure diagram now lists ARCHITECTURE.md and USER-GUIDE.md; body otherwise unchanged from v37.
+**Context:** Folds in the two Layer 4 NOTEs (purpose; external read-only architecture), the retirement of the embeddings retrieval design, the v2.1 rewrite, the Markdown conversion, the EXCLUDED set changes (docs out with frontmatter, README.md in), and the corrected manual-deploy claims.
+**Instructions:** Changed — BACKGROUND, ARTIFACT STATE, and NEXT TASK updated for the Layer 4 redefinition and the doc conversion; NEXT TASK points at the Layer 4 output-location/evaluation questions or a v34-era OPEN item.
+**Key decisions made:**
+- Layer 4 = cross-project reasoning-pattern synthesis; separate external repo; reads the library, never writes it; native AI tools, no embeddings
+- Embeddings+vector-store retrieval design retired — agentic file search covers retrieval natively
+- Layer 4 limits recorded: AI-mediated corpus, falsification path required, decision-policy model not cognition; growth mitigation must archive verbatim
+- ARCHITECTURE.md v2.1 and USER-GUIDE.md v1.1 replace the .tex files; LaTeX reversed for living reference docs; docs carry frontmatter; README.md added to EXCLUDED
+**Still open:**
+- Layer 4 output location (observer vs contributor) and evaluation design — before the first synthesis run
+- The longer-standing v34-era items (related: warning, MAP machine-readable block, artifact-type schema, DELTA, backups, write protection, log fold, Layer 5)

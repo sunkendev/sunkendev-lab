@@ -985,3 +985,22 @@ Verified 2026-07-02: current Claude models (Fable 5, Opus 4.8, Sonnet 4.6/5) car
 Failure class: a constant derived from a measurement, hardcoded without recording the assumption (window size, environment) that made it valid — same class as other doc/code drift this library has caught. The conservative direction is not free: false alarms at 14% cost premature checkpoints and needless session fragmentation.
 
 Proposed fix, pending approval: restate the skill's Context Awareness thresholds as ratios (Tier 1 = 65% of window, Tier 2 = 77.5%) with a per-environment window figure — 1M for Claude Code on current models, 200K as the conservative default where the environment or model is unknown (e.g. Cowork, Haiku-backed sessions). The estimate model's per-call weights remain approximate regardless; the ratio fix only corrects the reference frame.
+
+NOTE 2026-07-02
+---------------
+**Topic:** 1M context windows: project-level implications; proposed window config file and compression-boundary test skill
+Strategic counterpart to the previous NOTE's tactical threshold finding. Current models (verified 2026-07-02) carry 1M-token windows in Claude Code; implications for the project as a whole:
+
+Growth wall recedes: the v132 practical wall was computed against a ~160K effective budget; recomputed against 1M the same arithmetic lands past v600 — years away at actual cadence. THREAD.md archiving drops from urgent to dormant, which makes Layer 4's archive-verbatim-never-summarise constraint trivial to honor: the full reasoning corpus stays loadable. Caveat: the wall analysis measured fit, not attention quality — long-context retrieval inside 1M is imperfect, so structured curation still earns its keep.
+
+Validation, stated precisely: bigger windows alone would argue against checkpointing ("just keep one long conversation"). But the industry paired long windows with compaction, memory files, and structured note-taking — raw transcript is not memory. The 2026 stack converged on exactly the library's April bet: long working context plus externalized structured file-based state. The substitute got five times better and the design still is not displaced. This session is the demonstration: RESUME, full THREAD read, industry research, Layer 4 design debate, two NOTEs, the ARCHITECTURE rewrite, format conversion, and the v38 checkpoint — one conversation, ~15% of window. Long conversations are now the intended mode; checkpoints revert to milestone ceremony rather than pressure relief.
+
+Two design opportunities opened, to be decided deliberately: (1) RESUME read-set — the artifact was excluded partly for budget; at 1M, loading the latest artifact is nearly free and closes the measured signal-lost prose-voice gap; (2) Layer 4 first synthesis can be a whole-corpus single-pass read rather than chunked sampling.
+
+Design rule generalized from the threshold finding: benefit from the headroom, encode only ratios, never hardcode the window — window size is a vendor runtime property the library must not build assumptions on (Haiku sessions sit at 200K today).
+
+Two mechanisms proposed by the user, both pending design:
+
+1. A tracked model/context-window config file — a small table (model / environment / window / observed boundary) committed to the library that the ai-library-ops skill reads to know how and when to execute context-awareness behaviour, replacing hardcoded thresholds. Updated as models and environments change; the skill degrades to the conservative 200K default when the running model/environment is not in the table.
+
+2. A context-probe test skill to find the NATIVE COMPRESSION BOUNDARY empirically — the harness can summarise/compact a conversation to reduce noise well before the nominal window maxes out (v18 was exactly this: compression at 165K on a 200K window). The effective boundary is harness-policy-dependent, not window-dependent, and only empirical probing reveals it per environment. The probe would push a disposable session's context upward and record where compaction actually fires, feeding observed boundaries back into the config table — measurement over assumption, same methodology as the v18 forensics but proactive instead of post-mortem.

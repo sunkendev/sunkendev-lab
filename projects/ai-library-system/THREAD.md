@@ -939,3 +939,12 @@ THREAD ENTRY v37
 **Still open:**
 - Verify main established by this checkpoint's sync; MAP.md's gitignored logs/git-sync.log reference
 - The longer-standing v34-era items (related: warning, MAP machine-readable block, artifact-type schema, DELTA, backups, write protection, log fold, Layer 4/5)
+
+NOTE 2026-07-02
+---------------
+**Topic:** Layer 4 actual purpose: cross-project reasoning-pattern synthesis
+Layer 4's documented spec (single-library semantic retrieval via embedding model + vector store, ARCHITECTURE.tex) understates its actual intent, stated explicitly this session: cross-project reasoning-pattern synthesis. Layer 4 reads multiple project folders — THREAD.md checkpoint arcs, the append-only DECISIONS and RULED OUT registers, and recorded reversals — to learn how the human reasons in collaboration with AI: decision policies, preference boundaries, what kinds of arguments force a reversal. The distilled output would be an evidence-derived, versioned thinking-patterns document (a meta-persona), auditable and correctable like any other artifact. A possible later use is AI training — mimicking the human's judgment patterns; explicitly deferred, not scoped.
+
+Constraints noted in the same discussion: "recreate neural pathways" is out of reach — the corpus supports a decision-policy model, not neural recreation (the signal-lost test already established that conclusions and rationales transfer while deliberative texture does not); mechanically this needs agentic reading across projects/, not embeddings — consistent with the 2026 industry retreat from vector RAG toward tool-driven search, which makes the documented embeddings+Chroma design doubly stale; richer capture of in-the-moment deliberation at checkpoint time would improve later synthesis.
+
+Consequence: ARCHITECTURE.tex's Layer 4 section needs a rewrite — its "What Layer 4 Does Not Provide" list explicitly excludes cross-project synthesis, contradicting this stated intent. Rewrite pending, not yet scheduled.

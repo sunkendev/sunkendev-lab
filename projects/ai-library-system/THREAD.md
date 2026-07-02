@@ -948,3 +948,14 @@ Layer 4's documented spec (single-library semantic retrieval via embedding model
 Constraints noted in the same discussion: "recreate neural pathways" is out of reach — the corpus supports a decision-policy model, not neural recreation (the signal-lost test already established that conclusions and rationales transfer while deliberative texture does not); mechanically this needs agentic reading across projects/, not embeddings — consistent with the 2026 industry retreat from vector RAG toward tool-driven search, which makes the documented embeddings+Chroma design doubly stale; richer capture of in-the-moment deliberation at checkpoint time would improve later synthesis.
 
 Consequence: ARCHITECTURE.tex's Layer 4 section needs a rewrite — its "What Layer 4 Does Not Provide" list explicitly excludes cross-project synthesis, contradicting this stated intent. Rewrite pending, not yet scheduled.
+
+NOTE 2026-07-02
+---------------
+**Topic:** Layer 4 architecture: separate external repo, read-only via native AI tools
+Vision settled this session, extending the previous NOTE: Layer 4 will be built in its own separate repository, external to the AI library. It reads the library only — never writes — possibly using native AI tools (agentic Read/Grep/Glob over a clone) rather than any index infrastructure.
+
+Rationale: a reasoning-synthesis engine is a software project; housing it inside the library would eventually break the repo-scope constraint (no CI, no manifests, stdlib-only) that keeps the library a pure plain-text corpus. This does not contradict the v33 no-separate-repo decision, which was scoped to ai-library-system's own tests and scripts — those stay colocated. Read-only preserves the single-active-writer model and the kernel rule, and matters doubly here because the library is Layer 4's training signal: a consumer that could write back into its source data would poison the well. The library-facing interface is just the filesystem — no .index/ inside the library, no sync state, no library changes required; the vendor-independence boundary lands cleanly (the library requires nothing of any vendor; the Layer 4 repo may be vendor-specific).
+
+Consequence: Layer 4 stops being a layer inside the library folder (ARCHITECTURE.tex currently shows .index/ and code/search.py inside AI-Library/) and becomes the first system outside it, with the library as its data source. This compounds the pending ARCHITECTURE.tex Layer 4 rewrite.
+
+Open design question, deliberately unanswered: where Layer 4's output (the synthesized thinking-patterns document / meta-persona) lives. Either it stays in the Layer 4 repo (library unaware Layer 4 exists — observer model), or it returns to the library through the front door as a normal versioned project artifact reachable by RESUME (contributor model, same ceremony as any approved change). First decision the separate repo will force.

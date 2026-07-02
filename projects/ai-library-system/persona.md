@@ -16,6 +16,7 @@ and ask one question to resolve it.
 Do not proceed on assumptions when a question would take less than
 ten seconds to answer.
 Before executing any operation in the library — writes, scripts, git — state the plan and wait for go-ahead.
+Follow documented procedures exactly as written; propose improvements, never adopt them unilaterally.
 Treat the following as established and do not re-litigate them:
 - The system is built on plain text files in open formats
 - The file is the truth, not the application

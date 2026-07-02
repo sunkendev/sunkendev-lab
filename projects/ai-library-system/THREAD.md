@@ -1031,3 +1031,18 @@ Enforcement design for the "too smart for its own good" failure class (capable m
 Two operational findings from the same investigation:
 1. Orphaned-NOTE gap: NOTE's push-only design defers the main fold to "the next CHECKPOINT/COMMIT or session end" — but cloud sessions each start a fresh branch, so a NOTE left on a dead session branch is orphaned, not deferred (proven by the v37 bootstrap NOTE stranded on claude/new-session-iie1if, recovered above). Candidate mitigations for a future session: session-end sync discipline, or RESUME checking for unmerged session branches.
 2. GitHub default branch: the repo's default was still claude/new-session-iie1if (first ref ever pushed to the born-empty repo), so the GitHub landing page showed stale state while origin/main was fully current — the v30/v31 lesson's cousin (then main lagged; now the default pointer was wrong). User flips it to main in Settings; stale session branches deleted via UI (proxy 403s block it from sessions).
+
+THREAD ENTRY v39
+### v39 — 2026-07-02
+**Triggered by:** Enforcement rules added to the kernel after the v38 assembly-deviation post-mortem; produced 100% natively end to end as the mandated demonstration; folds six post-v38 NOTEs into main.
+**Artifact:** MASTER-PROMPT.md v39 — two behaviour rules (follow procedures by the letter; narrate method) and one checkpoint-ritual clause (all four blocks are direct output) added; otherwise unchanged from v38.
+**Context:** Knows the two rulings (no permission allowlist; ritual-only native checkpoints), the v38 no-corruption verification, the stale-threshold and 1M-window findings with the config-table and probe-skill proposals, the recovered stranded bootstrap NOTE, the orphaned-NOTE gap, and the default-branch fix.
+**Instructions:** Changed — BACKGROUND, ARTIFACT STATE, KEY DECISIONS, and NEXT TASK updated for the governance post-mortem; STYLE AND CONSTRAINTS now carries the letter-of-procedure and narrate-method duties.
+**Key decisions made:**
+- No permission allowlist — human approval stays at the tool layer; verify-before-retry protocol for dropped git steps
+- Checkpoints produced 100% natively; ad-hoc block-content scripts banned; enforcement = kernel law + method narration + DELTA as the incentive-removing fix
+- v38 verified uncorrupted and stands; no redo
+- Context thresholds are ratios, never hardcoded absolutes; window config table and compression-probe skill proposed
+- Stranded bootstrap NOTE recovered via add_note_thread.py with provenance; GitHub default branch flipped to main
+**Still open:**
+- git_sync fresh-repo fix; window config table; compression-probe skill; orphaned-NOTE mitigation; BOOTSTRAP.md reconstruction; RESUME read-set expansion; Layer 4 repo/output/eval; DELTA; the v34-era backlog

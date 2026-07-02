@@ -127,6 +127,9 @@
 - [v38--artifact.md](projects/ai-library-system/v38--artifact.md) — MASTER-PROMPT.md v38 — structure diagram now lists ARCHITECTURE.md and USER-GUIDE.md; body otherwise unchanged from v37.
 - [v38--context.md](projects/ai-library-system/v38--context.md) — Folds in the two Layer 4 NOTEs (purpose; external read-only architecture), the retirement of the embeddings retrieval design, the v2.1 rewrite, the Markdown conversion, the EXCLUDED set changes (docs out with frontmatter, README.md in), and the corrected manual-deploy claims.
 - [v38--instructions.md](projects/ai-library-system/v38--instructions.md) — Changed — BACKGROUND, ARTIFACT STATE, and NEXT TASK updated for the Layer 4 redefinition and the doc conversion; NEXT TASK points at the Layer 4 output-location/evaluation questions or a v34-era OPEN item.
+- [v39--artifact.md](projects/ai-library-system/v39--artifact.md) — MASTER-PROMPT.md v39 — two behaviour rules (follow procedures by the letter; narrate method) and one checkpoint-ritual clause (all four blocks are direct output) added; otherwise unchanged from v38.
+- [v39--context.md](projects/ai-library-system/v39--context.md) — Knows the two rulings (no permission allowlist; ritual-only native checkpoints), the v38 no-corruption verification, the stale-threshold and 1M-window findings with the config-table and probe-skill proposals, the recovered stranded bootstrap NOTE, the orphaned-NOTE gap, and the default-branch fix.
+- [v39--instructions.md](projects/ai-library-system/v39--instructions.md) — Changed — BACKGROUND, ARTIFACT STATE, KEY DECISIONS, and NEXT TASK updated for the governance post-mortem; STYLE AND CONSTRAINTS now carries the letter-of-procedure and narrate-method duties.
 
 ## projects/ai-library-system/code/ai-library-ops/
 

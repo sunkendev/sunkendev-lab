@@ -146,7 +146,7 @@ Every layer is optional. Layer 1 is the only one that is mandatory.
 \vspace{14pt}
 \hrule height 0.4pt
 \vspace{28pt}
-{\small Version 2.0 \quad --- \quad \today}
+{\small Version 2.1 \quad --- \quad \today}
 \vfill
 {\footnotesize\texttt{AI-Library / ARCHITECTURE.tex}}
 \end{titlepage}
@@ -163,7 +163,7 @@ Every layer is optional. Layer 1 is the only one that is mandatory.
 This document describes the complete five-layer architecture of the AI Document
 Library system. It serves as the single reference that integrates all components:
 the foundational file system, the session workspace layer, the automation layer,
-the semantic retrieval layer, and the full orchestration layer.
+the synthesis layer, and the full orchestration layer.
 
 Each layer builds on the one below it. No layer is required except Layer 1.
 A practitioner who implements only Layer 1 has a fully functional, permanent,
@@ -189,10 +189,10 @@ dependencies.
                  validating, and committing steps of the ritual. No
                  vendor API calls; these tools operate on text already
                  produced in a live session. \\
-4 & Retrieval & Semantic search and RAG (Retrieval-Augmented Generation)
-                over the library. AI sessions automatically load the most
-                relevant context from past work without manual selection.
-                Not yet implemented. \\
+4 & Synthesis & Cross-project reasoning-pattern synthesis: an external,
+                read-only system that reads the whole library to learn
+                how the user reasons, producing a versioned,
+                evidence-derived meta-persona. Not yet implemented. \\
 5 & Orchestration & Multi-agent workflows, scheduled sessions, cross-project
                     synthesis, team sharing infrastructure, and pipeline
                     automation for recurring work. Not yet implemented. \\
@@ -202,9 +202,11 @@ dependencies.
 
 \subsection{Document History}
 
-This is version 2.0 of this document, superseding the original written
-2026-04-11 alongside the project's founding documents. The original is
-archived at \texttt{projects/ai-library-system/docs/2026-04-11--architecture-v1-original--claude.tex}.
+This is version 2.1 of this document. Version 2.0 (2026-06-28)
+superseded the original written 2026-04-11 alongside the project's
+founding documents; the original is archived at
+\texttt{projects/ai-library-system/docs/2026-04-11--architecture-v1-original--claude.tex}.
+Version 2.1 (2026-07-02) redefines Layer 4.
 
 The rewrite exists because Layers 1--3 had, by this point, been built,
 used, and revised through 30 checkpoints of real operation --- and had
@@ -216,10 +218,14 @@ pre-commit hook were running reliably, but the deferral was never
 revisited: it was copied forward, unexamined, through every checkpoint
 from v08 to v30. This version closes that gap for Layers 1--3.
 
-Layers 4 and 5 are carried forward from the original text essentially
-unchanged. They describe capability that has not been built yet, so
-there is no implementation to drift against --- they remain what they
-always were: a forward-looking design, not a record of something built.
+Layer 5 is carried forward from the original text essentially
+unchanged. It describes capability that has not been built yet, so
+there is no implementation to drift against --- it remains what it
+always was: a forward-looking design, not a record of something built.
+Layer 4 was redefined on 2026-07-02: the original semantic-retrieval
+design was retired and the layer now specifies cross-project
+reasoning-pattern synthesis, external to the library and read-only
+(see the Layer 4 section for the rationale). Both remain unbuilt.
 
 \subsection{The Governing Principle}
 
@@ -257,9 +263,11 @@ at every layer:
 \end{itemize}
 
 At Layer 4 and Layer 5, specific tooling choices are made
-(embedding models, vector databases, orchestration frameworks).
-These choices are modular. The underlying file system remains intact
-if any Layer 4 or Layer 5 component is replaced or removed.
+(agentic AI tooling, orchestration frameworks). These choices are
+modular. Layer 4 in particular is external to the library and
+read-only, so replacing or removing it leaves no trace; the underlying
+file system remains intact if any Layer 4 or Layer 5 component is
+replaced or removed.
 
 \subsection{The Generational Property}
 
@@ -485,8 +493,9 @@ filename and position in the structure instead.
 
 \begin{itemize}
   \item Automatic mechanical execution of the ritual --- that is Layer 3
-  \item Search across the library by meaning rather than filename
-        --- that is Layer 4
+  \item Synthesis of reasoning patterns across projects --- that is
+        Layer 4 (search by meaning needs no dedicated layer: any
+        session with file access does it with native file tools)
   \item Scheduling or pipeline automation --- that is Layer 5
   \item The judgment of when to checkpoint, what belongs in a project,
         or how to resolve a conflict --- this always remains with the user
@@ -651,9 +660,12 @@ After Layer 3, the checkpoint ritual is:
   \item Save them to \texttt{temp/v[NN]-checkpoint.txt}.
   \item Run \texttt{checkpoint.py [slug] [NN]} as a dry run; review the
         proposed files, sizes, and commit message.
-  \item Run it again with \texttt{--write}.
-  \item If the artifact is \texttt{MASTER-PROMPT.md}, copy the new
-        triplet artifact to the library root.
+  \item Run it again with \texttt{--write}. If the project declares
+        deploy targets (via its \texttt{.deploy} marker ---
+        \texttt{ai-library-system} declares \texttt{MASTER-PROMPT.md}),
+        the script auto-deploys the artifact verbatim as part of the
+        write. Copying it by hand is prohibited; a pre-commit guard
+        verifies the deployed file byte-equals the latest artifact.
   \item Commit. The pre-commit hook validates structure before the
         commit is allowed to complete.
 \end{enumerate}
@@ -752,8 +764,9 @@ only Layer 3 component end users interact with directly:
 \textbf{Operation} & \textbf{What the skill does} \\
 \midrule
 CHECKPOINT & Saves the four blocks to \texttt{temp/}, runs
-\texttt{checkpoint.py} dry-run then \texttt{--write}, copies
-\texttt{MASTER-PROMPT.md} if it is the artifact, commits. \\
+\texttt{checkpoint.py} dry-run then \texttt{--write} (which
+auto-deploys \texttt{MASTER-PROMPT.md} verbatim when it is the
+artifact), commits, then pushes and fast-forwards \texttt{main}. \\
 NOTE & Calls \texttt{add\_note\_thread.py} with the topic and body;
 commits immediately. \\
 COMMIT & Stages and commits routine, non-triplet file changes (e.g.\
@@ -777,174 +790,173 @@ skills do.
 \subsection{What Layer 3 Does Not Provide}
 
 \begin{itemize}
-  \item Semantic search or context retrieval --- that is Layer 4
+  \item Cross-project reasoning-pattern synthesis --- that is Layer 4
   \item Scheduling --- that is Layer 5
   \item The checkpoint trigger judgment --- that always remains with the user
   \item Any AI vendor API call --- the scripts are pure text processors
 \end{itemize}
 
 % ---------------------------------------------------------------
-\section{Layer 4 --- Retrieval}
+\section{Layer 4 --- Synthesis}
 
 \begin{layerbox4}
-\textbf{Layer 4: Retrieval} \quad Requires an embedding model and a vector store.\\
-Enables semantic search across the library and automatic context loading.\\
-The library becomes queryable by meaning, not just by filename.
+\textbf{Layer 4: Synthesis} \quad Requires a separate repository and an AI with native file-reading tools.\\
+Reads the library --- never writes it --- to learn how the user reasons in collaboration with AI.\\
+Produces a versioned, evidence-derived model of the user's thinking patterns.
 \end{layerbox4}
 
 \subsection{What Layer 4 Provides}
 
-As the library grows, the manual identification of relevant prior work
-becomes a bottleneck. A user with 200 project files across 30 projects
-cannot scan \texttt{MAP.md} effectively when starting a session that may
-draw on 15 different prior documents.
+Layer 4 is cross-project reasoning-pattern synthesis. It reads the
+library as a corpus --- every project's \texttt{THREAD.md} arc, the
+append-only DECISIONS and RULED OUT registers, and the recorded
+reversals --- and distils from them how the user actually reasons:
+which trade-offs they weigh and how, what they reliably reject and
+why, what kinds of arguments change their mind, and what rigor they
+demand before accepting a fix.
 
-Layer 4 solves this by adding a semantic search layer over the library.
-Every file in the library is indexed by meaning. When starting a new
-session on a topic, the user asks the retrieval system for the most
-relevant prior work, and the system returns ranked results with excerpts.
-The relevant files are then loaded into the session context.
+The output is a thinking-patterns document --- a meta-persona ---
+derived from evidence rather than self-description, versioned like any
+other artifact so the user can audit what the system claims to have
+learned about them and correct it. Where \texttt{persona.md} is the
+user's self-declared behaviour specification, the Layer 4 synthesis is
+the measured counterpart; disagreement between the two is itself
+signal.
 
-This is the RAG (Retrieval-Augmented Generation) pattern applied to
-the AI Library file system.
+A possible later use of the same corpus is AI training ---
+conditioning or tuning a model to mimic the user's judgment patterns.
+That use is explicitly deferred and unscoped; nothing in this layer's
+design depends on it.
 
-\subsection{How the Index Works}
+\subsection{Why the Original Retrieval Design Was Retired}
 
-\subsubsection{Embedding}
+In versions 1.0 and 2.0 of this document, Layer 4 was specified as
+semantic retrieval: an embedding model, a vector store, and index
+maintenance scripts living inside the library. That design was retired
+on 2026-07-02, for two reasons.
 
-Every file in the library is processed by an embedding model that converts
-its content into a dense numerical vector. Similar content (by meaning,
-not by keyword) produces similar vectors. The embedding model can be:
+First, dedicated retrieval infrastructure became unnecessary. Agentic
+file search --- an AI session using its native file tools (read, grep,
+glob) in an iterative loop --- displaced embedding-based retrieval for
+corpora of exactly this kind, industry-wide, during 2025--2026. The
+library's own conventions (consistent naming, frontmatter,
+\texttt{MAP.md}, one schema everywhere) make it maximally legible to
+that kind of search, with no index to build, sync, or back up.
+Searching the library by meaning is now understood as a native
+capability of any Layer 2 session with file access, not a layer of its
+own.
 
-\begin{itemize}
-  \item A cloud API (OpenAI \texttt{text-embedding-3-large}, Anthropic,
-        Cohere, or equivalent)
-  \item A locally running model (nomic-embed-text, mxbai-embed-large,
-        or equivalent via Ollama)
-\end{itemize}
+Second, retrieval was never the layer's real intent. Finding relevant
+prior work is a convenience; the standing purpose of reading across
+projects is to learn from the accumulated record of human--AI
+collaboration itself. The layer number is retained; its contents are
+redefined.
 
-The locally running option is preferred for a permanent library because
-it does not depend on any external service and processes content without
-sending it to a third party.
+\subsection{Architecture: External and Read-Only}
 
-\subsubsection{Vector Store}
-
-The embeddings are stored in a vector database that supports fast
-approximate nearest-neighbour search. Options range from simple
-local files to full database systems:
-
-\begin{center}
-\begin{tabular}{@{}llll@{}}
-\toprule
-\textbf{Option} & \textbf{Type} & \textbf{Setup} & \textbf{Best for} \\
-\midrule
-Chroma & Local file & Minimal & Libraries under 10,000 files \\
-LanceDB & Local file & Minimal & Larger libraries, fast queries \\
-Qdrant & Docker & Moderate & Team libraries, high performance \\
-Weaviate & Docker & Moderate & Complex queries, multi-modal \\
-Pinecone & Cloud & Low & When local storage is not preferred \\
-\bottomrule
-\end{tabular}
-\end{center}
-
-For a personal library, Chroma or LanceDB with a locally running
-embedding model is sufficient and introduces no external dependencies.
-
-\subsubsection{Indexing Strategy}
-
-Files are indexed at two granularities:
+Layer 4 lives in its own repository, external to the library. It reads
+a clone of the library and never writes to it. Three consequences
+follow, each deliberate:
 
 \begin{itemize}
-  \item \textbf{Document level:} The entire file is embedded as a single
-        unit. The vector captures the overall meaning of the document.
-  \item \textbf{Chunk level:} The file is divided into overlapping chunks
-        of approximately 500 tokens. Each chunk is embedded separately.
-        This enables retrieval of specific passages within large documents.
+  \item \textbf{The library stays a pure corpus.} A synthesis engine
+        is a software project; housing it inside the library would
+        break the constraint that keeps the library free of CI,
+        dependency manifests, and non-stdlib code. Externalising it
+        means the library requires nothing new.
+  \item \textbf{The record cannot be contaminated.} Read-only access
+        preserves the single-active-writer model and the kernel rule.
+        This matters doubly here: the library is Layer 4's training
+        signal, and a consumer that could write into its own source
+        data would poison the well.
+  \item \textbf{The vendor boundary lands cleanly.} The library-facing
+        interface is just the filesystem. The Layer 4 repository may
+        be as vendor-specific as it likes --- native AI tools, one
+        vendor's agent runtime --- without compromising the library's
+        vendor independence, because removing Layer 4 leaves no trace
+        in the library.
 \end{itemize}
 
-YAML frontmatter is extracted and stored as structured metadata alongside
-the embedding. This allows filtered search: ``find relevant documents
-from 2025, type: research, vendor: claude.''
+Read-only is currently a discipline, not an enforcement --- nothing
+mechanical prevents an external agent from writing into a clone. The
+practical write barriers are git: the library remote's branch
+protection, and the fact that a Layer 4 clone's changes are never
+pulled. A filesystem-level read-only mount is the stronger option if
+discipline proves insufficient.
 
-\subsection{The Retrieval Workflow}
+\subsection{The Corpus and Its Limits}
 
-\subsubsection{Querying the Library}
+What the library offers as signal, in roughly descending order of
+value:
 
-\begin{lstlisting}
-search.py "[natural language query]" [--type TYPE] [--vendor VENDOR]
-          [--date-from DATE] [--date-to DATE] [--top-k N]
-
-Examples:
-  search.py "interest rate effects on small business credit"
-  search.py "landing page copy SaaS" --vendor gpt --top-k 5
-  search.py "authentication module" --type code --date-from 2025-01-01
-\end{lstlisting}
-
-The script returns ranked results with file paths, dates, tags, and
-the most relevant excerpt from each result.
-
-\subsubsection{Automatic Context Loading}
-
-When starting a session on a topic, the user runs a retrieval query
-and loads the top results into the session context:
-
-\begin{lstlisting}
-load-context.py "[topic description]" --top-k 5 --output context-load.md
-\end{lstlisting}
-
-The script produces a \texttt{context-load.md} file containing:
 \begin{itemize}
-  \item The top 5 most relevant excerpts from the library
-  \item File paths and dates for each excerpt
-  \item A brief summary of what was found and why it is relevant
+  \item \textbf{RULED OUT registers} --- rejected options with recorded
+        rationale: preference pairs, the strongest available signal of
+        where the user's boundaries lie
+  \item \textbf{Reversals} --- decisions overturned later, with both
+        states preserved by the append-only rule: direct evidence of
+        what kinds of arguments change the user's mind
+  \item \textbf{DECISIONS registers} --- the settled positions themselves
+  \item \textbf{THREAD.md arcs} --- the temporal order in which positions
+        were reached, held, and revised
+  \item \textbf{persona.md} --- the self-declared baseline the synthesis
+        can be tested against
 \end{itemize}
 
-The user pastes \texttt{context-load.md} into the new session after the
-master prompt, before the instructions file. The AI now has relevant
-prior work in its context before work begins.
+Three limits are known in advance and must be designed against rather
+than discovered:
 
-\subsection{Index Maintenance}
+\begin{itemize}
+  \item \textbf{The corpus is AI-mediated.} Checkpoint blocks are
+        drafted by an AI and approved by the user; they record
+        conclusions and rationales in the AI's phrasing, not the
+        deliberation itself. A naive synthesis will partly learn the
+        checkpoint genre rather than the user. Reversals and explicit
+        user overrides are the least contaminated signal.
+  \item \textbf{The synthesis needs a falsification path.} Without an
+        evaluation --- for example, predicting the user's actual call
+        on held-out decisions and scoring against what they really
+        chose --- the meta-persona is unfalsifiable prose. No such
+        evaluation is designed yet.
+  \item \textbf{It is a decision-policy model, not a mind.} The corpus
+        supports learning judgment patterns. It does not support
+        recreating cognition. Richer capture of in-the-moment
+        deliberation at checkpoint time is the only way to deepen what
+        can be learned.
+\end{itemize}
 
-The index must be updated when files are added, modified, or deleted.
-A maintenance script handles this:
+\subsection{Open Design Questions}
 
-\begin{lstlisting}
-index-sync.py [--full | --incremental]
-
---full:          Re-index all files in the library (slow, use weekly)
---incremental:   Index only files modified since the last sync (fast,
-                 run after each session)
-\end{lstlisting}
-
-\subsection{Layer 4 File Structure}
-
-\begin{lstlisting}
-AI-Library/
-|-- .index/                    (hidden folder, not version-controlled)
-|   |-- chroma/                (vector database files)
-|   |-- embeddings-log.json    (record of what has been indexed)
-|   `-- sync-state.json        (last sync timestamp per file)
-|-- code/
-|   |-- checkpoint.py
-|   |-- search.py
-|   |-- load-context.py
-|   `-- index-sync.py
-|-- (all Layer 1-3 files unchanged)
-\end{lstlisting}
-
-The \texttt{.index/} folder is excluded from version control and cloud sync
-if the embedding model is local and can rebuild the index from the files.
-If the embedding model is cloud-based and rebuilding is expensive, the
-index is backed up with the library.
+\begin{itemize}
+  \item \textbf{Where the output lives.} Either the synthesis stays in
+        the Layer 4 repository (observer model: the library never
+        knows Layer 4 exists), or it returns to the library through
+        the front door as a normal versioned project artifact
+        reachable by RESUME (contributor model: same ceremony as any
+        approved change). The contributor model creates a feedback
+        loop --- sessions load the meta-persona, which shapes future
+        decisions, which feed future synthesis --- and that loop must
+        be reasoned about before the first synthesis run, not after.
+  \item \textbf{Coupling to the library's growth mitigation.} Any
+        future archiving or compression of \texttt{THREAD.md} decides
+        what Layer 4 can ever learn. If this layer is the long-term
+        purpose of the corpus, growth mitigation must preserve the
+        reasoning record verbatim --- archive, never summarise.
+\end{itemize}
 
 \subsection{What Layer 4 Does Not Provide}
 
 \begin{itemize}
-  \item Automatic retrieval without user query --- the user still decides
-        when to run a retrieval query and what to ask
-  \item Cross-library retrieval --- Layer 4 indexes one library
-  \item Scheduled or triggered indexing without user invocation
-  \item Multi-agent coordination --- that is Layer 5
+  \item Writes to the library --- never, under any design
+  \item Retrieval infrastructure --- native agentic file search
+        already covers finding relevant prior work
+  \item Content-level cross-project synthesis (connections and
+        contradictions between project subject matter) --- that is
+        Layer 5's synthesis agent; Layer 4 synthesises the reasoning,
+        not the content
+  \item Automatic or scheduled synthesis runs --- scheduling is Layer 5
+  \item Recreation of the user's cognition --- the corpus supports a
+        decision-policy model, nothing deeper
 \end{itemize}
 
 % ---------------------------------------------------------------
@@ -953,7 +965,8 @@ index is backed up with the library.
 \begin{layerbox5}
 \textbf{Layer 5: Orchestration} \quad Requires MCP client, agent framework, and scheduling infrastructure.\\
 Transforms the library from a managed archive into an active, partially autonomous system.\\
-Implement only when Layers 1 through 4 are stable and well-understood.
+Implement only when Layers 1 through 3 are stable and well-understood.
+Layer 4 is external and independent --- not a prerequisite.
 \end{layerbox5}
 
 \subsection{What Layer 5 Provides}
@@ -967,9 +980,11 @@ human intervention per session. These capabilities are:
         navigates it without the user pasting any files
   \item \textbf{Scheduled sessions:} Recurring AI tasks that run on a
         schedule and produce new files in the library automatically
-  \item \textbf{Cross-project synthesis:} An agent that reads across
-        multiple project THREAD.md files and produces synthesis documents
-        that identify connections, contradictions, and patterns
+  \item \textbf{Cross-project content synthesis:} An agent that reads
+        across multiple project THREAD.md files and produces synthesis
+        documents that identify connections, contradictions, and
+        patterns between project subject matter (distinct from Layer 4,
+        which synthesises the user's reasoning patterns, not content)
   \item \textbf{Team infrastructure:} Shared library folders, role-based
         access to project folders, and merge protocols for collaborative
         work on shared projects
@@ -1021,8 +1036,7 @@ files are written by the agent directly.
   "projects_dir": "projects/",
   "allowed_write_paths": ["projects/", "inbox/", "temp/", "logs/"],
   "protected_files": ["MASTER-PROMPT.md", "ARCHITECTURE.tex",
-                       "USER-GUIDE.tex", "CLAUDE.md"],
-  "auto_index_on_write": true
+                       "USER-GUIDE.tex", "CLAUDE.md"]
 }
 \end{lstlisting}
 
@@ -1150,16 +1164,13 @@ AI-Library/
 |-- .mcp-config.json
 |-- code/
 |   |-- checkpoint.py
-|   |-- search.py
-|   |-- load-context.py
-|   |-- index-sync.py
 |   |-- weekly-synthesis.py
 |   |-- run-pipeline.py
 |   |-- merge.py
 |   `-- pipelines/
 |       |-- research-brief.yaml
 |       `-- [other pipelines]
-|-- (all Layer 1-4 files unchanged)
+|-- (all Layer 1-3 files unchanged; Layer 4 adds nothing here)
 \end{lstlisting}
 
 \subsection{What Layer 5 Requires Before Implementation}
@@ -1179,7 +1190,6 @@ Before implementing Layer 5, the following should be true:
 \begin{itemize}
   \item Layer 1 is in active daily use with at least 10 projects
   \item Layer 3 (scripted checkpoints) is running reliably
-  \item Layer 4 (semantic search) is indexed and returning accurate results
   \item The user can navigate the library from \texttt{MAP.md} without
         confusion and has a clear mental model of its structure
   \item Git version control is active on the library folder so that
@@ -1202,7 +1212,7 @@ Before implementing Layer 5, the following should be true:
 \node[box, fill=l5color!15, draw=l5color, text=l5color!80!black]
   (l5) {Layer 5 --- Orchestration};
 \node[box, fill=l4color!15, draw=l4color, text=l4color!80!black, below=0.3cm of l5]
-  (l4) {Layer 4 --- Retrieval};
+  (l4) {Layer 4 --- Synthesis (external, read-only)};
 \node[box, fill=l3color!15, draw=l3color, text=l3color!80!black, below=0.3cm of l4]
   (l3) {Layer 3 --- Automation};
 \node[box, fill=l2color!15, draw=l2color, text=l2color!80!black, below=0.3cm of l3]
@@ -1242,9 +1252,8 @@ Structural validation & 3 & pre-commit hook \\
 Ritual orchestration & 3 & ai-library-ops skill \\
 Note logging & 3 & add\_note\_thread.py \\
 \midrule
-Semantic search & 4 & Embedding model + vector store \\
-Automatic context loading & 4 & search.py + load-context.py \\
-Filtered retrieval & 4 & Frontmatter metadata + vector similarity \\
+Reasoning-pattern synthesis & 4 & External read-only repo, agentic reading of all projects \\
+Meta-persona output & 4 & Versioned synthesis document (location undecided) \\
 \midrule
 Folder navigation by AI & 5 & MCP client reads library directly \\
 Scheduled tasks & 5 & cron + API scripts \\
@@ -1280,10 +1289,13 @@ Do not skip layers.
         update accurately. Use it for ten real checkpoints before
         adding Layer 4.
 
-  \item \textbf{Layer 4:} Choose an embedding model and vector store.
-        Index the library. Run ten retrieval queries across different
-        topics. Verify that results are accurate and relevant. Integrate
-        retrieval into the session start workflow for one month.
+  \item \textbf{Layer 4:} Create the external synthesis repository and
+        give it read-only access to a library clone. Decide where the
+        output lives (observer vs.\ contributor) and design the
+        evaluation before the first synthesis run. Run a first
+        synthesis across all projects and validate it against
+        \texttt{persona.md} and held-out decisions before trusting it.
+        Independent of Layer 5 --- may be built before or after.
 
   \item \textbf{Layer 5:} Implement MCP connection first, before any
         scheduling or pipelines. Run ten sessions via the MCP client.
@@ -1302,7 +1314,7 @@ Do not skip layers.
 1 & Implemented & In daily use since project start; 30+ checkpoints \\
 2 & Implemented & Multi-platform: Claude Code (CLI/cloud/iOS), Cowork \\
 3 & Implemented & checkpoint.py, pre-commit hook, ai-library-ops skill \\
-4 & Not implemented & Estimated 4--8 hours setup once undertaken \\
+4 & Not implemented & Redefined 2026-07-02: external read-only synthesis repo; unscoped \\
 5 & Not implemented & Estimated 8--20 hours setup once undertaken \\
 \bottomrule
 \end{tabular}
@@ -1339,7 +1351,7 @@ This document. Complete five-layer architecture reference. \\
 \vspace{12pt}
 
 \begin{center}
-{\small\texttt{AI-Library / ARCHITECTURE.tex} \quad Version 2.0 \quad \today}\\[6pt]
+{\small\texttt{AI-Library / ARCHITECTURE.tex} \quad Version 2.1 \quad \today}\\[6pt]
 {\small Plain text. Open format. No vendor. No application required. No expiry.}\\[4pt]
 {\footnotesize
 Layer 1 is the only mandatory layer.\\

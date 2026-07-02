@@ -974,3 +974,14 @@ THREAD ENTRY v38
 **Still open:**
 - Layer 4 output location (observer vs contributor) and evaluation design — before the first synthesis run
 - The longer-standing v34-era items (related: warning, MAP machine-readable block, artifact-type schema, DELTA, backups, write protection, log fold, Layer 5)
+
+NOTE 2026-07-02
+---------------
+**Topic:** Context thresholds stale: v18 calibration assumed a 200K window, current models carry 1M
+The skill's context-awareness thresholds (Tier 1 at 130K input tokens, Tier 2 at 155K) were derived from the v18 compression event of 2026-04-13: compression hit at 165,028 tokens, 82.5% of the then-operative 200K window, in a Cowork session. Correct measurement and correct math for that environment on that date — but the numbers encode an absolute figure where the durable finding was a ratio (warn at ~65% of the window, act at ~77.5%).
+
+Verified 2026-07-02: current Claude models (Fable 5, Opus 4.8, Sonnet 4.6/5) carry 1M-token context windows, and Claude Code on paid plans supports the 1M window. This session (Claude Code cloud, Fable 5) triggered a Tier 1 warning at ~138K — roughly 14% of the actual window, a false positive by a factor of five to seven. The v38 checkpoint it accompanied was justified as a completed unit of work, but the urgency was spurious.
+
+Failure class: a constant derived from a measurement, hardcoded without recording the assumption (window size, environment) that made it valid — same class as other doc/code drift this library has caught. The conservative direction is not free: false alarms at 14% cost premature checkpoints and needless session fragmentation.
+
+Proposed fix, pending approval: restate the skill's Context Awareness thresholds as ratios (Tier 1 = 65% of window, Tier 2 = 77.5%) with a per-environment window figure — 1M for Claude Code on current models, 200K as the conservative default where the environment or model is unknown (e.g. Cowork, Haiku-backed sessions). The estimate model's per-call weights remain approximate regardless; the ratio fix only corrects the reference frame.

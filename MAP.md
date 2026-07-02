@@ -4,8 +4,8 @@
 
 - [MAP.md](MAP.md) — Master index of all library items
 - [MASTER-PROMPT.md](MASTER-PROMPT.md) — Operative system prompt: the sole control mechanism for the library
-- [ARCHITECTURE.tex](ARCHITECTURE.tex) — Five-layer architecture reference, v2.0: Layers 1–3 rewritten to match the actual built system, Layers 4–5 unchanged (unbuilt)
-- [USER-GUIDE.tex](USER-GUIDE.tex) — Practical end-to-end usage guide, v1.0: RESUME, CHECKPOINT, NOTE, COMMIT, NEW PROJECT, multi-platform notes
+- [ARCHITECTURE.md](ARCHITECTURE.md) — Five-layer architecture reference, v2.1: Layer 4 redefined as external read-only reasoning-pattern synthesis; converted from LaTeX 2026-07-02
+- [USER-GUIDE.md](USER-GUIDE.md) — Practical end-to-end usage guide, v1.1: RESUME, CHECKPOINT, NOTE, COMMIT, NEW PROJECT, multi-platform notes; converted from LaTeX 2026-07-02
 - [README.md](README.md) — Public-facing repo overview: what the library is, how it works, quickstart
 - [LICENSE](LICENSE) — MIT license
 

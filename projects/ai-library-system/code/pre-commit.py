@@ -63,8 +63,7 @@ EXCLUDED = {
     "MAP.md",
     "MASTER-PROMPT.md",
     "CLAUDE.md",
-    "ARCHITECTURE.tex",
-    "USER-GUIDE.tex",
+    "README.md",  # public-facing repo overview; frontmatter would render as a table on GitHub
     "THREAD.md",
     "persona.md",
     "SKILL.md",   # skill framework files use their own frontmatter schema

@@ -35,8 +35,8 @@ to context-window limits or platform switches.
 - **`code/git_sync.py`** pushes and fast-forwards `main` so a session never
   ends stranded on an orphaned branch.
 
-Full mechanics are documented in `ARCHITECTURE.tex` (design/reference) and
-`USER-GUIDE.tex` (practical walkthrough).
+Full mechanics are documented in `ARCHITECTURE.md` (design/reference) and
+`USER-GUIDE.md` (practical walkthrough).
 
 ## Repository layout
 
@@ -45,8 +45,8 @@ AI-Library/
 |-- MAP.md              # index of every file in the library
 |-- MASTER-PROMPT.md     # the operative system prompt
 |-- CLAUDE.md            # imports MASTER-PROMPT.md for Claude Code sessions
-|-- ARCHITECTURE.tex     # five-layer design reference
-|-- USER-GUIDE.tex       # end-to-end usage guide
+|-- ARCHITECTURE.md      # five-layer design reference
+|-- USER-GUIDE.md        # end-to-end usage guide
 |-- code/                # deployed scripts, skills, and their tests
 |   `-- githooks/        # portable pre-commit hook (enable per clone, see below)
 |-- .claude/skills/       # Claude Code cloud-autoload skill copy

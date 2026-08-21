@@ -63,6 +63,12 @@ only `ai-library-system`, the project that designed and built the library
 itself. Add your own project with `NEW PROJECT` (see below) to see the
 workflow in action.
 
+> [!WARNING]
+> **Privacy:** If you use AI Library for personal, private, or proprietary
+> work, use a private GitHub repository or remove/change the configured Git
+> remote. The included Git tooling can push project contents to `origin`.
+> Never store secrets, credentials, or sensitive information in a public fork.
+
 ## Getting started
 
 1. Clone the repo, then enable the portable pre-commit hook once per clone:
